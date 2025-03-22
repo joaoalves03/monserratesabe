@@ -15,11 +15,12 @@ export const initIO = (httpServer: HttpServer) => {
     })
 
     io.on('connection', (socket) => {
-        socket.on('joinPoll', (pollId) => {
-            socket.join(`poll-${pollId}`)
-        })
-        socket.on('joinHome', () => {
-            socket.join("home")
+        socket.on('joinGame', (gameId) => {
+            socket.join(`game-${gameId}`)
+
+            // TODO: return game state
+
+            socket.emit("hi")
         })
     })
 
