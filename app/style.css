@@ -1,0 +1,52 @@
+@import 'material-symbols';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+#app {
+    @apply flex flex-col w-screen h-screen overflow-x-hidden;
+}
+
+.material-symbols-rounded,
+.material-symbols-sharp,
+.material-symbols-outlined{
+    @apply select-none transition-transform duration-300 ease-in-out;
+}
+
+.material-symbols-sharp.fill,
+.material-symbols-rounded.fill {
+    font-variation-settings: 'FILL' 1;
+}
+
+input,
+select{
+    @apply bg-gray-100 py-2 px-4 rounded-md invalid:border-solid invalid:border-red-500 invalid:bg-red-100;
+}
+
+
+
+
+.word {
+    @apply flex select-none;
+    --i: 0;
+    --speed: 0;
+
+    .letter {
+        text-shadow: #00000066 0.05rem 0.20rem;
+        animation: letter-up ease-in-out infinite alternate;
+        animation-delay: calc(var(--i) * clamp(-0.5s, calc(var(--speed) * 1.5s), -1.5s));
+        animation-duration: clamp(0.3s, calc(var(--speed) * 1s), 1s);
+    }
+}
+
+@keyframes letter-up {
+    0%{
+        text-shadow: #00000066 0.05rem 0.20rem;
+        transform: translateY(0rem) rotate(-1deg);
+    }
+    100%{
+        text-shadow: #00000066 0.05rem 0.25rem;
+        transform: translateY(-0.10rem) rotate(1deg);
+    }
+}
