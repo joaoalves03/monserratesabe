@@ -4,54 +4,39 @@ import {useProfileStore} from "@/stores/profile.js"
 import {onMounted, ref} from "vue"
 import Dropdown from "@/components/Dropdown.vue"
 import DropdownItem from "@/components/DropdownItem.vue"
+import NewGame from "@/views/modals/NewGame.vue"
 import axios, {AxiosError} from "axios"
-import {useRouter} from "vue-router"
+import {prompt} from "@/plugins/prompt.js";
+import {toast} from "@/plugins/toast.js";
 
 const profile = useProfileStore()
-const router = useRouter()
 
-const rounds = ref([])
+const gameModal = ref(false)
+const toggleModal = (value: boolean) => {
+  gameModal.value = value
+}
 
 onMounted(async () => {
   if(profile.data === undefined) {
     await profile.fetch()
   }
 
-  const res = await axios.get("/api/round")
-  rounds.value = res.data
 })
 
-const newGame = async () => {
-  const response = prompt("Round name")
-  const teamIDs = prompt("(TEMPORARY) Team IDs, split by comma")
-  if(response && teamIDs) {
-    try {
-      const res = await axios.post("/api/round", {
-        name: response,
-        team_ids: teamIDs.split(",").map(teamID => Number(teamID)),
-      })
-
-      await router.push(`/game/${res.data.id}`)
-    } catch (e: any) {
-      alert("Error creating round")
-    }
-  }
-}
-
 const addAdmin = async () => {
-  const response = prompt("Admin Email")
+  const response = await prompt.ask("Admin Email")
   if(response) {
     try {
       await axios.post("/api/auth/admin", {
         email: response
       })
 
-      alert("Admin created successfully")
+      toast.success(`Admin created`)
     } catch (e: any) {
       if(e instanceof AxiosError && e.status === 409) {
-        alert(`Admin with email ${response} already exists`)
+        toast.error(`Admin already exists`)
       } else {
-        alert("Unknown error creating admin")
+        toast.error(`Unknown Error`)
       }
     }
   }
@@ -73,7 +58,7 @@ const addAdmin = async () => {
       </template>
 
       <DropdownItem path="/dashboard/" icon="dashboard">Dashboard</DropdownItem>
-      <DropdownItem @click="newGame()" icon="person_add">New Game</DropdownItem>
+      <DropdownItem @click="toggleModal(true)" icon="person_add">New Game</DropdownItem>
       <DropdownItem @click="addAdmin()" icon="person_add">New Admin</DropdownItem>
       <DropdownItem path="/api/auth/logout" icon="logout" class="danger">Log out</DropdownItem>
     </Dropdown>
@@ -87,6 +72,10 @@ const addAdmin = async () => {
       Login
     </Button>
   </div>
+
+  <NewGame title="New Game"
+      :visible="gameModal"
+      @close="toggleModal(false)" />
 </template>
 
 <style scoped>
