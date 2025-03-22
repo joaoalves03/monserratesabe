@@ -12,11 +12,11 @@ import {User} from "./entities/User.js"
 
 export const AppDataSource = new DataSource({
     type: "postgres",
-    host: "localhost",
-    port: 5432,
-    username: "monserratesabe",
-    password: "monserratesabe",
-    database: "monserratesabe",
+    host: process.env.POSTGRES_HOST || "localhost",
+    port:  Number(process.env.POSTGRES_PORT || 5432),
+    username: process.env.POSTGRES_USER || "monserratesabe",
+    password: process.env.POSTGRES_PASSWORD || "monserratesabe",
+    database: process.env.POSTGRES_DB || "monserratesabe",
     synchronize: true,
     logging: true,
     entities: [User, Answer, Category, Question, Round, RoundCategory, RoundQuestion, RoundTeam, Team, TeamMember],

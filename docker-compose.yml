@@ -1,11 +1,17 @@
 services:
   db:
-    image: postgres:17-alpine
     container_name: monserratesabe-db
     hostname: monserratesabe-db
+    image: postgres:17.3
     ports:
-      - "5432:5432"
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres:/var/lib/postgresql/data
     environment:
-      POSTGRES_USER: monserratesabe
-      POSTGRES_PASSWORD: monserratesabe
-      POSTGRES_DB: monserratesabe
+      POSTGRES_USER: ${POSTGRES_USER:-monserratesabe}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-monserratesabe}
+      POSTGRES_DB: ${POSTGRES_DB:-monserratesabe}
+
+volumes:
+  postgres:
+    driver: local
