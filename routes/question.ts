@@ -4,6 +4,8 @@ import {CreateQuestionSchema, Question, UpdateQuestionSchema} from "../entities/
 import {AppDataSource} from "../data-source.js"
 import {Category} from "../entities/Category.js"
 import {requireAdmin} from "../middleware/requireAdmin.js"
+import {Round} from "../entities/Round.js"
+import {Answer} from "../entities/Answer.js"
 
 const router = express.Router()
 
@@ -11,8 +13,10 @@ router.use(errorHandler)
 
 const questionRepository = AppDataSource.getRepository(Question)
 const categoryRepository = AppDataSource.getRepository(Category)
+const roundRepository = AppDataSource.getRepository(Round)
+const answerRepository = AppDataSource.getRepository(Answer)
 
-router.get('/', requireAdmin, async (req, res) => {
+router.get('/', async (req, res) => {
     try {
         const questions = await questionRepository.find({
             relations: ['category', 'answers']
@@ -25,8 +29,10 @@ router.get('/', requireAdmin, async (req, res) => {
     }
 })
 
-router.get('/:id', requireAdmin, async (req, res) => {
+router.get('/:id', async (req, res) => {
     try {
+        const isAuthenticated = req.isAuthenticated()
+
         const id = parseInt(req.params.id)
         const question = await questionRepository.findOne({
             where: { id },
@@ -38,7 +44,41 @@ router.get('/:id', requireAdmin, async (req, res) => {
             return
         }
 
-        res.status(200).json(question)
+        const responseQuestion = { ...question }
+
+        if (!isAuthenticated && responseQuestion.answers) {
+            responseQuestion.answers = responseQuestion.answers.map(answer => {
+                return {
+                    ...answer,
+                    is_correct: undefined
+                }
+            })
+        }
+
+        res.status(200).json(responseQuestion)
+    } catch (error) {
+        console.error('Error fetching question:', error)
+        res.status(500).json({ message: 'Failed to fetch question' })
+    }
+})
+
+router.get('/round_answers/:id', async (req, res) => {
+    try {
+        const round = await roundRepository.findOne({where: { id: Number(req.params.id) }})
+
+        if(round.status != "SHOW_ANSWER") {
+            res.sendStatus(401)
+            return
+        }
+
+        const correctAnswers = (await answerRepository.find({
+            where: {
+                question: { id: round.selected_question },
+                is_correct: true
+            },
+        })).map(x => x.id)
+
+        res.status(200).json(correctAnswers)
     } catch (error) {
         console.error('Error fetching question:', error)
         res.status(500).json({ message: 'Failed to fetch question' })

@@ -44,9 +44,7 @@ async function selectCategory(id: number) {
 }
 
 async function next() {
-  props.socket.emit("updateRound", {
-    status: "SELECT_ANSWER"
-  })
+  props.socket.emit("launchQuestion")
 }
 
 

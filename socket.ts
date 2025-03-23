@@ -3,11 +3,15 @@ import { Server as HttpServer } from "node:http"
 import {AppDataSource} from "./data-source.js"
 import {Round} from "./entities/Round.js"
 import type {GamePhase} from "./entities/Round.js"
+import {Question} from "./entities/Question.js"
+import {RoundQuestion} from "./entities/RoundQuestion.js"
 
 let io: Server
 
 export const initIO = (httpServer: HttpServer) => {
     const roundRepository = AppDataSource.getRepository(Round)
+    const questionRepository = AppDataSource.getRepository(Question)
+    const roundQuestionRepository = AppDataSource.getRepository(RoundQuestion)
 
     io = new Server(httpServer, {
         cors: {
@@ -47,7 +51,7 @@ export const initIO = (httpServer: HttpServer) => {
         })
 
         socket.on('updateRound', async(data: Partial<Round>) => {
-            const round = roundRepository.findOne({where: {id: socket.data.gameId}})
+            const round = await roundRepository.findOne({where: {id: socket.data.gameId}})
 
             await roundRepository.update({id: socket.data.gameId}, {
                 ...round,
@@ -55,6 +59,52 @@ export const initIO = (httpServer: HttpServer) => {
             })
 
             io.to(`game-${socket.data.gameId}`).emit("updateState", data)
+        })
+
+        socket.on('launchQuestion', async() => {
+            const round = await roundRepository.findOne({where: {id: socket.data.gameId}})
+            const question = await questionRepository
+                .createQueryBuilder('question')
+                .leftJoin('question.category', 'category')
+                .where('category.id = :categoryId', { categoryId: round.selected_category })
+                .andWhere(subQuery => {
+                    const subQueryBuilder = subQuery
+                        .subQuery()
+                        .select('rq.question_id')
+                        .from(RoundQuestion, 'rq')
+                        .where('rq.round_id = :roundId', { roundId: round.id })
+                        .andWhere('rq.round_game = :roundGame', { roundGame: round.round_game })
+                        .getQuery()
+                    return `question.id NOT IN ${subQueryBuilder}`
+                })
+                .orderBy('RANDOM()')
+                .limit(1)
+                .getOne();
+
+            await roundRepository.update({id: socket.data.gameId}, {
+                status: "SELECT_ANSWER",
+                selected_question: question.id
+            })
+
+            io.to(`game-${socket.data.gameId}`).emit("updateState", {
+                status: "SELECT_ANSWER",
+                selected_question: question.id
+            })
+        })
+
+        socket.on('submitAnswer', async () => {
+            // TODO: MODIFY TEAM POINTS
+
+            const round = await roundRepository.findOne({where: {id: socket.data.gameId}})
+
+            await roundRepository.update({id: socket.data.gameId}, {
+                status: "SHOW_ANSWER"
+            })
+
+            io.to(`game-${socket.data.gameId}`).emit("revealAnswer")
+            io.to(`game-${socket.data.gameId}`).emit("updateState", {
+                status: "SHOW_ANSWER"
+            })
         })
     })
 

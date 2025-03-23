@@ -10,5 +10,6 @@ export interface Round {
     selected_team: number,
     selected_question: number,
     selected_category: number,
+    selected_answer: number,
     round_teams: TeamDTO[]
 }

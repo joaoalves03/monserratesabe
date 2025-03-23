@@ -10,6 +10,7 @@ export type GameStatus =
     | "SELECT_TEAM"
     | "SELECT_ANSWER"
     | "SHOW_ANSWER"
+    | "SHOW_TEAMS"
     | "SHOW_WINNER"
 
 export type GamePhase =
@@ -48,6 +49,9 @@ export class Round {
 
     @Column("int", { nullable: true })
     selected_category!: number
+
+    @Column("int", { nullable: true })
+    selected_answer!: number
 
     @Column("int", { default: 0 })
     round_game!: number

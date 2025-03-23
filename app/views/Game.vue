@@ -6,6 +6,7 @@ import Phase from "@/views/game/Phase.vue"
 import {Round} from "@/models/round.js"
 import Team from "@/views/game/Team.vue"
 import Options from "@/views/game/Options.vue"
+import Question from "@/views/game/Question.vue"
 
 const route = useRoute()
 
@@ -33,10 +34,12 @@ onMounted(async () => {
   <div v-if="!round">Loading...</div>
 
   <Phase v-else-if="round.status == 'SELECT_PHASE'" :socket="socket" />
-  <Team v-else-if="round.status == 'SELECT_TEAM'"
-        :socket="socket" :teams="round.round_teams" :selected-team="round.selected_team" />
+  <Team v-else-if="round.status == 'SELECT_TEAM' || round.status == 'SHOW_TEAMS'"
+        :socket="socket" :round="round" />
   <Options v-else-if="round.status == 'SELECT_OPTIONS'"
         :socket="socket" :round="round" />
+  <Question v-else-if="round.status == 'SELECT_ANSWER' || round.status == 'SHOW_ANSWER'"
+           :socket="socket" :round="round" />
 
   <div v-else>Not implemented</div>
 </template>
