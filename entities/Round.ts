@@ -10,8 +10,12 @@ export type GameState =
     | "SELECT_TEAM"
     | "SELECT_ANSWER"
     | "SHOW_ANSWER"
+    | "SHOW_WINNER"
+
+export type GamePhase =
+    | "QUESTIONS"
     | "TEAM_CHALLENGE"
-    | "SHOW_WINNER";
+    | "BUZZER"
 
 @Entity()
 export class Round {
@@ -29,6 +33,12 @@ export class Round {
         default: "SELECT_PHASE",
     })
     status!: GameState;
+
+    @Column({
+        type: "varchar",
+        nullable: true,
+    })
+    phase!: GamePhase | null;
 
     @Column("int", { default: 0 })
     round_game!: number
