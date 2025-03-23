@@ -1,7 +1,7 @@
 import express from "express"
 import errorHandler from "../errorHandler.js"
 import {AppDataSource} from "../data-source.js"
-import {GameState, Round, roundSchema} from "../entities/Round.js"
+import {Round, roundSchema} from "../entities/Round.js"
 import {requireAdmin} from "../middleware/requireAdmin.js"
 import {RoundTeam} from "../entities/RoundTeam.js"
 import {Team} from "../entities/Team.js"
@@ -45,7 +45,7 @@ router.post("/", requireAdmin, async (req, res) => {
 
         const newRound = new Round()
         newRound.name = name
-        newRound.status = GameState.SELECT_PHASE
+        newRound.status = "SELECT_PHASE"
 
         const savedRound = await roundRepository.save(newRound)
 

@@ -4,15 +4,14 @@ import {RoundCategory} from "./RoundCategory.js"
 import {RoundQuestion} from "./RoundQuestion.js"
 import {z} from "zod"
 
-export enum GameState {
-    SELECT_PHASE,
-    SELECT_OPTIONS,
-    SELECT_TEAM,
-    SELECT_ANSWER,
-    SHOW_ANSWER,
-    TEAM_CHALLENGE,
-    SHOW_WINNER
-}
+export type GameState =
+    | "SELECT_PHASE"
+    | "SELECT_OPTIONS"
+    | "SELECT_TEAM"
+    | "SELECT_ANSWER"
+    | "SHOW_ANSWER"
+    | "TEAM_CHALLENGE"
+    | "SHOW_WINNER";
 
 @Entity()
 export class Round {
@@ -26,11 +25,10 @@ export class Round {
     round_date!: Date
 
     @Column({
-        type: "enum",
-        enum: GameState,
-        default: GameState.SELECT_PHASE,
+        type: "varchar",
+        default: "SELECT_PHASE",
     })
-    status!: GameState
+    status!: GameState;
 
     @Column("int", { default: 0 })
     round_game!: number
