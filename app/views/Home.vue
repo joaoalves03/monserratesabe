@@ -7,7 +7,7 @@ import {useRouter} from "vue-router"
 
 const router = useRouter()
 
-const rounds: Ref<Round | undefined> = ref(undefined)
+const rounds: Ref<Round[] | undefined> = ref(undefined)
 
 onMounted(async () => {
   const res = await axios.get("/api/round")

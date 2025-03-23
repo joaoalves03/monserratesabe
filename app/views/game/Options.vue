@@ -5,6 +5,10 @@ import {Category} from "@/models/category.js"
 import {Round} from "@/models/round.js"
 import axios from "axios"
 import SmallTeamSelect from "@/components/SmallTeamSelect.vue"
+import Button from "@/components/Button.vue"
+import {useProfileStore} from "@/stores/profile.js"
+
+const profile = useProfileStore()
 
 const props = defineProps({
   socket: {
@@ -42,38 +46,28 @@ async function selectCategory(id: number) {
     selected_category: id
   })
 }
-
-async function next() {
-  props.socket.emit("launchQuestion")
-}
-
-
 </script>
 
 <template>
-  <div class="flex flex-col">
-    <div>
-      <button
-          v-for="category in categories"
-          :disabled="usedCategories.includes(category.id)"
-          :class="([
-            usedCategories.includes(category.id) ? 'bg-gray-400' : 'bg-blue-400',
-            category.id === round.selected_category ? 'border-2 border-yellow-400' : ''
-        ])"
-          class="px-3 py-1 m-1"
-          @click="selectCategory(category.id)">
-        {{category.name}}
-      </button>
+  <div class="flex flex-col w-screen h-screen justify-center items-center">
+    <div class="flex flex-col grow justify-center items-center">
+      <div class="flex gap-1 flex-wrap">
+        <Button
+            v-for="category in categories"
+            :disabled="usedCategories.includes(category.id) || !profile.data"
+            :class="([
+              usedCategories.includes(category.id) ? 'disabled' : '',
+              category.id === round.selected_category ? 'selected' : ''
+            ])"
+            class="px-3 py-1 m-1"
+            @click="selectCategory(category.id)">
+          {{category.name}}
+        </Button>
+      </div>
     </div>
-    <button
-        :disabled="round.selected_category == null"
-        :class="round.selected_category == null ? 'bg-gray-400' : 'bg-yellow-400'"
-        class="px-3 py-1 m-1"
-        @click="next">
-      Continue
-    </button>
+    <SmallTeamSelect :socket="socket" :selected-team="round.selected_team" :teams="round.round_teams"  />
   </div>
-  <SmallTeamSelect :socket="socket" :selected-team="round.selected_team" :teams="round.round_teams"  />
+
 </template>
 
 <style scoped>
