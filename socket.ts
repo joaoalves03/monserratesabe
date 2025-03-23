@@ -1,7 +1,7 @@
 import { Server } from 'socket.io'
 import { Server as HttpServer } from "node:http"
 import {AppDataSource} from "./data-source.js"
-import {GameStatus, Round} from "./entities/Round.js"
+import {Round} from "./entities/Round.js"
 import type {GamePhase} from "./entities/Round.js"
 
 let io: Server
@@ -46,24 +46,15 @@ export const initIO = (httpServer: HttpServer) => {
             })
         })
 
-        socket.on('updateStatus', async (key: string) => {
+        socket.on('updateRound', async(data: Partial<Round>) => {
+            const round = roundRepository.findOne({where: {id: socket.data.gameId}})
+
             await roundRepository.update({id: socket.data.gameId}, {
-                status: key as GameStatus
+                ...round,
+                ...data
             })
 
-            io.to(`game-${socket.data.gameId}`).emit("updateState", {
-                status: key
-            })
-        })
-
-        socket.on('updateSelectedTeam', async (id: number | undefined) => {
-            await roundRepository.update({id: socket.data.gameId}, {
-                selected_team: id
-            })
-
-            io.to(`game-${socket.data.gameId}`).emit("updateState", {
-                selected_team: id
-            })
+            io.to(`game-${socket.data.gameId}`).emit("updateState", data)
         })
     })
 

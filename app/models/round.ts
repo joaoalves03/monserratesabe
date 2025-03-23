@@ -9,5 +9,6 @@ export interface Round {
     status: string,
     selected_team: number,
     selected_question: number,
+    selected_category: number,
     round_teams: TeamDTO[]
 }

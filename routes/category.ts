@@ -3,15 +3,32 @@ import errorHandler from "../errorHandler.js"
 import {AppDataSource} from "../data-source.js"
 import {Category, CategorySchema} from "../entities/Category.js"
 import {requireAdmin} from "../middleware/requireAdmin.js"
+import {Round} from "../entities/Round.js"
+import {RoundCategory} from "../entities/RoundCategory.js"
 
 const router = express.Router()
 
 router.use(errorHandler)
 
-router.get("/", requireAdmin, async (req, res) => {
+router.get("/", async (req, res) => {
     const categoryRepository = AppDataSource.getRepository(Category)
 
     res.send(await categoryRepository.find())
+})
+
+router.get("/used/:id", async (req, res) => {
+    const roundCategoryRepository = AppDataSource.getRepository(RoundCategory)
+    const roundRepository = AppDataSource.getRepository(Round)
+
+    const round = await roundRepository.findOne({where: {id: Number(req.params.id)}})
+
+    const roundCategories = await roundCategoryRepository.find({where: {
+        round_id: Number(req.params.id),
+        team_id: round.selected_team,
+        round_game: round.round_game
+    }})
+
+    res.send(roundCategories.map((x) => x.category_id))
 })
 
 router.post("/", requireAdmin, async (req, res) => {

@@ -46,6 +46,9 @@ export class Round {
     @Column("int", { nullable: true })
     selected_question!: number
 
+    @Column("int", { nullable: true })
+    selected_category!: number
+
     @Column("int", { default: 0 })
     round_game!: number
 
@@ -61,5 +64,5 @@ export class Round {
 
 export const roundSchema = z.object({
     name: z.string().min(1, "Round name is required"),
-    team_ids: z.array(z.number().int().positive()).min(2)
+    team_ids: z.array(z.number().int()).min(2)
 })

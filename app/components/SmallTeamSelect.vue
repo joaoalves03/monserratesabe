@@ -22,24 +22,9 @@ async function selectTeam(id: number) {
     selected_team: id === props.selectedTeam ? null : id
   })
 }
-
-async function next() {
-  props.socket.emit("updateRound", {
-    status: "SELECT_OPTIONS"
-  })
-}
 </script>
 
 <template>
-<div>
-  <div>Selecionar uma equipa</div>
-  <button
-      :disabled="selectedTeam === null"
-      class="px-3 py-1 m-1"
-      :class="selectedTeam === null ? 'bg-gray-400' : 'bg-blue-400'"
-      @click="next">
-    Confirmar
-  </button>
   <div>
     <button
         v-for="team_data in teams"
@@ -49,7 +34,6 @@ async function next() {
       {{team_data.team.team_name}}
     </button>
   </div>
-</div>
 </template>
 
 <style scoped>
