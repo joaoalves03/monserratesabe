@@ -4,7 +4,7 @@ import {RoundCategory} from "./RoundCategory.js"
 import {RoundQuestion} from "./RoundQuestion.js"
 import {z} from "zod"
 
-export type GameState =
+export type GameStatus =
     | "SELECT_PHASE"
     | "SELECT_OPTIONS"
     | "SELECT_TEAM"
@@ -32,13 +32,19 @@ export class Round {
         type: "varchar",
         default: "SELECT_PHASE",
     })
-    status!: GameState;
+    status!: GameStatus
 
     @Column({
         type: "varchar",
         nullable: true,
     })
-    phase!: GamePhase | null;
+    phase!: GamePhase | null
+
+    @Column("int", { nullable: true })
+    selected_team!: number
+
+    @Column("int", { nullable: true })
+    selected_question!: number
 
     @Column("int", { default: 0 })
     round_game!: number

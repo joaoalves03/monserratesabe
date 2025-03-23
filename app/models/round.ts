@@ -1,4 +1,4 @@
-import {Team} from "./team.js"
+import {TeamDTO} from "@/models/teamDTO.js"
 
 export interface Round {
     id: number,
@@ -7,5 +7,7 @@ export interface Round {
     round_date: string,
     round_game: number,
     status: string,
-    round_teams: Team[]
+    selected_team: number,
+    selected_question: number,
+    round_teams: TeamDTO[]
 }

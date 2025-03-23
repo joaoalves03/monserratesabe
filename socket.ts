@@ -1,7 +1,7 @@
 import { Server } from 'socket.io'
 import { Server as HttpServer } from "node:http"
 import {AppDataSource} from "./data-source.js"
-import {Round} from "./entities/Round.js"
+import {GameStatus, Round} from "./entities/Round.js"
 import type {GamePhase} from "./entities/Round.js"
 
 let io: Server
@@ -35,18 +35,34 @@ export const initIO = (httpServer: HttpServer) => {
         })
 
         socket.on('updatePhase', async (key: string) => {
-            const newStatus = key == "TEAM_CHALLENGE"
-                ? "SELECT_TEAM"
-                : "SELECT_OPTIONS"
-
             await roundRepository.update({id: socket.data.gameId}, {
-                status: newStatus,
+                status: "SELECT_TEAM",
                 phase: key as GamePhase,
             })
 
             io.to(`game-${socket.data.gameId}`).emit("updateState", {
-                status: newStatus,
+                status: "SELECT_TEAM",
                 phase: key
+            })
+        })
+
+        socket.on('updateStatus', async (key: string) => {
+            await roundRepository.update({id: socket.data.gameId}, {
+                status: key as GameStatus
+            })
+
+            io.to(`game-${socket.data.gameId}`).emit("updateState", {
+                status: key
+            })
+        })
+
+        socket.on('updateSelectedTeam', async (id: number | undefined) => {
+            await roundRepository.update({id: socket.data.gameId}, {
+                selected_team: id
+            })
+
+            io.to(`game-${socket.data.gameId}`).emit("updateState", {
+                selected_team: id
             })
         })
     })
