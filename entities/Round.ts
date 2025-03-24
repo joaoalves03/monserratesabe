@@ -66,7 +66,30 @@ export class Round {
     round_categories!: RoundCategory[]
 }
 
+const colors = [
+    '#f84a4a', '#269cfd', '#26d63c',
+    '#ff3dee', '#D4A5A5', '#9B89B3'
+]
+
 export const roundSchema = z.object({
     name: z.string().min(1, "Round name is required"),
-    team_ids: z.array(z.number().int()).min(2)
+    teams: z.array(
+        z.object({
+            team_id: z.number().int(),
+            color: z.string().refine(
+                val => colors.includes(val),
+                "Invalid team color"
+            )
+        })
+    )
+    .min(3, "Minimum 3 teams required")
+    .max(6, "Maximum 6 teams allowed")
+    .refine(
+        teams => new Set(teams.map(t => t.color)).size === teams.length,
+        "Colors must be unique"
+    )
+    .refine(
+        teams => new Set(teams.map(t => t.team_id)).size === teams.length,
+        "Teams must be unique"
+    )
 })

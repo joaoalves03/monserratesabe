@@ -41,7 +41,7 @@ router.post("/", requireAdmin, async (req, res) => {
             return
         }
 
-        const { name, team_ids } = result.data
+        const { name, teams } = result.data
 
         const newRound = new Round()
         newRound.name = name
@@ -52,18 +52,19 @@ router.post("/", requireAdmin, async (req, res) => {
         const teamRepository = AppDataSource.getRepository(Team)
         const roundTeamRepository = AppDataSource.getRepository(RoundTeam)
 
-        for(let _id of team_ids) {
-            if(!await teamRepository.exists({where: {id: _id}})) {
+        for(let team of teams) {
+            if(!await teamRepository.exists({where: {id: team.team_id}})) {
                 await roundRepository.remove(savedRound)
                 res.status(400).json({ message: 'One or more teams do not exist' })
                 return
             }
         }
 
-        const roundTeams = team_ids.map(team_id => {
+        const roundTeams = teams.map(team => {
             const roundTeam = new RoundTeam()
-            roundTeam.round_id = savedRound.id
-            roundTeam.team_id = team_id
+            roundTeam.round = savedRound
+            roundTeam.team_id = team.team_id
+            roundTeam.color = team.color
             return roundTeam
         })
 

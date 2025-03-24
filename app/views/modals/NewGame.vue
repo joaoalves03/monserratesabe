@@ -16,13 +16,26 @@ const props = defineProps({
   },
 })
 
-const colors = ['#f84a4a', '#269cfd', '#26d63c']
+const colors = [
+  '#f84a4a', '#269cfd', '#26d63c',
+  '#ff3dee', '#D4A5A5', '#9B89B3'
+]
+
+interface SelectedTeam {
+  teamId: number | null
+  color: string
+}
+
 const availableTeams = ref<Team[]>([])
 const emit = defineEmits(["close"])
 
 const form = ref<HTMLFormElement | null>(null)
 const gameTitle = ref("")
-const selectedTeamIds = ref<(number | null)[]>([null, null, null])
+const selectedTeams = ref<SelectedTeam[]>([
+  { teamId: null, color: colors[0] },
+  { teamId: null, color: colors[1] },
+  { teamId: null, color: colors[2] }
+])
 
 onMounted(async () => {
   try {
@@ -35,7 +48,11 @@ onMounted(async () => {
 
 const closeModal = () => {
   gameTitle.value = ""
-  selectedTeamIds.value = [null, null, null]
+  selectedTeams.value = [
+    { teamId: null, color: colors[0] },
+    { teamId: null, color: colors[1] },
+    { teamId: null, color: colors[2] }
+  ]
   emit("close")
 }
 
@@ -43,30 +60,58 @@ const submit = () => {
   form.value?.requestSubmit()
 }
 
+const addTeam = () => {
+  if (selectedTeams.value.length >= 6) return
+  const availableColor = colors.find(color =>
+      !selectedTeams.value.some(t => t.color === color)
+  )
+  if (availableColor) {
+    selectedTeams.value.push({ teamId: null, color: availableColor })
+  }
+}
+
+const removeTeam = (index: number) => {
+  if (selectedTeams.value.length <= 3) return
+  selectedTeams.value.splice(index, 1)
+}
+
 const selectTeam = (index: number, teamId: number) => {
-  selectedTeamIds.value[index] = teamId
+  selectedTeams.value[index].teamId = teamId
+}
+
+const selectColor = (index: number, color: string) => {
+  selectedTeams.value[index].color = color
 }
 
 const getAvailableTeams = (currentIndex: number) => {
   return availableTeams.value.filter(team => {
-    return !selectedTeamIds.value.some((id, idx) =>
-        id === team.id && idx !== currentIndex
+    return !selectedTeams.value.some((t, idx) =>
+        t.teamId === team.id && idx !== currentIndex
     )
   })
 }
 
+const getAvailableColors = (currentIndex: number) => {
+  return colors.filter(color =>
+      !selectedTeams.value.some((t, idx) =>
+          t.color === color && idx !== currentIndex
+      )
+  )
+}
+
 const savePoll = async () => {
-  if (selectedTeamIds.value.some(id => id === null)) {
-    alert('Please select all 3 teams')
+  if (selectedTeams.value.some(t => t.teamId === null)) {
+    alert('Please select all teams')
     return
   }
-
-  const teamIds = selectedTeamIds.value.filter(id => id !== null) as number[]
 
   try {
     const response = await axios.post("/api/round", {
       name: gameTitle.value,
-      team_ids: teamIds
+      teams: selectedTeams.value.map(t => ({
+        team_id: t.teamId,
+        color: t.color
+      }))
     })
 
     closeModal()
@@ -100,25 +145,58 @@ const savePoll = async () => {
       <div class="flex flex-col gap-2">
         <div>
           <label>Teams <span class="text-red-500">*</span></label>
-          <p class="font-light text-red-500 text-xs">Select three unique teams</p>
+          <p class="font-light text-red-500 text-xs">Select between 3-6 unique teams</p>
         </div>
 
-        <div v-for="(teamId, index) in selectedTeamIds" :key="index" class="flex items-center gap-2">
-          <div
-              class="h-fit w-fit p-4 aspect-square rounded-md"
-              :style="`background-color: ${colors[index]}`"
-          ></div>
+        <div v-for="(team, index) in selectedTeams" :key="index" class="flex items-center gap-2">
+          <div class="flex items-center gap-2 flex-1">
+            <Dropdown>
+              <template v-slot:button>
+                <div
+                    class="h-8 w-8 rounded-md cursor-pointer"
+                    :style="`background-color: ${team.color}`"
+                ></div>
+              </template>
+              <DropdownItem
+                  v-for="color in getAvailableColors(index)"
+                  :key="color"
+                  @click="selectColor(index, color)"
+              >
+                <div
+                    class="h-6 w-6 rounded-md"
+                    :style="`background-color: ${color}`"
+                ></div>
+              </DropdownItem>
+            </Dropdown>
 
-          <Dropdown :text="availableTeams.find(t => t.id === teamId)?.team_name || 'Select team'">
-            <DropdownItem
-                v-for="team in getAvailableTeams(index)"
-                :key="team.id"
-                @click="selectTeam(index, team.id)"
-            >
-              {{ team.team_name }}
-            </DropdownItem>
-          </Dropdown>
+            <Dropdown class="w-full" :text="availableTeams.find(t => t.id === team.teamId)?.team_name || 'Select team'">
+              <DropdownItem
+                  v-for="teamOpt in getAvailableTeams(index)"
+                  :key="teamOpt.id"
+                  @click="selectTeam(index, teamOpt.id)"
+              >
+                {{ teamOpt.team_name }}
+              </DropdownItem>
+            </Dropdown>
+          </div>
+
+          <Button
+              v-if="selectedTeams.length > 3"
+              type="button"
+              icon="remove"
+              @click="removeTeam(index)"
+          />
         </div>
+
+        <Button
+            v-if="selectedTeams.length < 6"
+            type="button"
+            class="mt-2"
+            icon="add"
+            @click="addTeam"
+        >
+          Add Team
+        </Button>
       </div>
     </form>
 
@@ -128,6 +206,3 @@ const savePoll = async () => {
     </template>
   </Modal>
 </template>
-
-<style scoped>
-</style>

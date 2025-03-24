@@ -20,4 +20,7 @@ export class RoundTeam {
     @ManyToOne(() => Team, team => team.round_teams, { onDelete: 'RESTRICT' })
     @JoinColumn({ name: "team_id" })
     team!: Team
+
+    @Column("varchar")
+    color!: string
 }

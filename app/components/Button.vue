@@ -36,7 +36,9 @@ const route = () => {
     <template v-else>
       <slot name="icon"></slot>
     </template>
-    <slot></slot>
+    <div class="flex justify-start w-full">
+      <slot></slot>
+    </div>
 
     <span v-if="props.tailing_icon" class="material-symbols-rounded fill">{{props.tailing_icon}}</span>
     <template v-else>

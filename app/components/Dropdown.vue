@@ -51,7 +51,7 @@ onUnmounted(() => {
 
 <template>
   <div class="flex relative select-none" ref="dropdown">
-    <Button v-if="props.text" @click.stop="active = !active" type="button">
+    <Button class="!w-full" v-if="props.text" @click.stop="active = !active" type="button">
       {{props.text}}
 
       <template v-slot:tailing_icon>

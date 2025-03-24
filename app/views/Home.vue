@@ -43,12 +43,19 @@ function goToGame(id: number) {
         <div
             v-for="round in rounds"
             @click="goToGame(round.id)"
-            class="bg-gray-300 p-4 rounded-lg w-60 hover:bg-gray-400 hover:cursor-pointer transition-all"
+            class="bg-gray-300 rounded-lg w-60 hover:bg-gray-400 hover:cursor-pointer transition-all overflow-hidden"
         >
-          <b>{{round.name}}</b>
-          <div>Teams:</div>
-          <div class="flex flex-col">
-            <div class="font-light" v-for="team in round.round_teams">{{team.team.team_name}}</div>
+          <div class="p-4">
+            <b>{{round.name}}</b>
+          </div>
+          <div class="flex">
+            <div
+                class="flex justify-center items-center w-full text-white font-bold"
+                v-for="team in round.round_teams"
+                :style="{ backgroundColor: team.color }"
+            >
+              {{team.team.team_name}}
+            </div>
           </div>
         </div>
       </div>
