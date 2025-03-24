@@ -36,7 +36,7 @@ const route = () => {
     <template v-else>
       <slot name="icon"></slot>
     </template>
-    <div class="flex justify-start w-full">
+    <div v-if="$slots.default" class="flex justify-start w-full">
       <slot></slot>
     </div>
 
@@ -50,8 +50,8 @@ const route = () => {
 <style scoped>
 
 .button{
-  @apply w-fit px-2 py-2 flex gap-2 rounded-md select-none active:translate-y-1 text-white font-bold
-        shadow-[0_0.25rem] active:shadow-none shadow-blue-700 bg-blue-500 hover:bg-blue-500/90
+  @apply w-fit px-2 py-2 flex gap-2 rounded-md select-none text-white font-bold bg-primary-500
+        shadow-primary-700  shadow-[0_0.25rem] active:translate-y-1 active:shadow-none hover:bg-primary-500/90
         transition-all duration-150 ease-in-out;
 }
 
@@ -60,7 +60,7 @@ const route = () => {
 }
 
 .button.selected{
-  @apply bg-yellow-500 shadow-yellow-700 hover:bg-yellow-400;
+  @apply bg-primary-600 hover:bg-yellow-600/90 shadow-none translate-y-1;
 }
 
 .button.disabled{

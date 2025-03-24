@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import {Socket} from "socket.io-client"
+import {prompt} from "@/plugins/prompt.js";
+import Button from "@/components/Button.vue";
 
 const props = defineProps({
   socket: {
@@ -19,7 +21,8 @@ async function updatePhase(key: string) {
     let number_of_questions: any
 
     do {
-      number_of_questions = parseInt(prompt("Número de perguntas"))
+      number_of_questions = await prompt.ask("Número de perguntas")
+      number_of_questions = parseInt(number_of_questions)
     } while (isNaN(number_of_questions))
 
     props.socket.emit("updateRound", {
@@ -37,14 +40,15 @@ async function updatePhase(key: string) {
 </script>
 
 <template>
-  <p>Fase</p>
-  <div class="flex">
-    <button
-        v-for="(phase, key) of phases"
-        class="bg-blue-400 px-3 py-1 m-1"
-        @click="updatePhase(key)">
-      {{phase}}
-    </button>
+  <div class="h-full w-full flex flex-col gap-1 justify-center items-center">
+    <p class="text-2xl">Fase</p>
+    <div class="flex gap-2">
+      <Button
+          v-for="(phase, key) of phases"
+          @click="updatePhase(key)">
+        {{phase}}
+      </Button>
+    </div>
   </div>
 </template>
 

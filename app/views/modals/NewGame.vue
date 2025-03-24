@@ -7,6 +7,7 @@ import Modal from "@/components/Modal.vue"
 import Button from "@/components/Button.vue"
 import Dropdown from "@/components/Dropdown.vue"
 import DropdownItem from "@/components/DropdownItem.vue"
+import {toast} from "@/plugins/toast.js";
 
 const router = useRouter()
 const props = defineProps({
@@ -116,8 +117,10 @@ const savePoll = async () => {
 
     closeModal()
     await router.push(`/game/${response.data.id}`)
+    toast.success("Game created")
   } catch (error) {
-    console.error("Error saving poll:", error)
+    console.error("Error creating game", error)
+    toast.success("Error creating game")
   }
 }
 </script>

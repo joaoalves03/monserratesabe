@@ -25,7 +25,7 @@ const closeModal = () => {
       <div v-if="props.title" class="w-full flex justify-between items-center gap-6">
         <h1 class="text-3xl">{{props.title}}</h1>
 
-        <Button icon="close" @click="closeModal"></Button>
+        <Button icon="close" class="danger" @click="closeModal"></Button>
       </div>
 
       <div class="slot">

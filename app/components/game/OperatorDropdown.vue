@@ -90,7 +90,7 @@ async function moreBuzzer() {
       Continuar
     </Button>
 
-    <Dropdown text="Opções">
+    <Dropdown icon="settings">
       <DropdownItem @click="changePhase" icon="edit">Alterar Fase</DropdownItem>
       <DropdownItem @click="editPointsModal = !editPointsModal" icon="tune">Editar Pontos</DropdownItem>
       <DropdownItem @click="" icon="sports_score">Acabar Jogo</DropdownItem>

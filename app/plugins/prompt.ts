@@ -18,7 +18,7 @@ export const prompt = {
     async ask(message: string): Promise<unknown> {
         return new Promise((resolve) => {
             if (promptState.resolvePrompt) {
-                console.error('A prompt is already ativa.')
+                console.error('A prompt is already active.')
                 resolve(null)
             } else {
                 promptState.type = 'ask'
@@ -32,7 +32,7 @@ export const prompt = {
     async confirm(message: string): Promise<unknown> {
         return new Promise((resolve) => {
             if (promptState.resolvePrompt) {
-                console.error('A prompt is already ativa.')
+                console.error('A prompt is already active.')
                 resolve(false)
             } else {
                 promptState.type = 'confirm'

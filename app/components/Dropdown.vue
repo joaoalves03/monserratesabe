@@ -7,6 +7,10 @@ const props = defineProps({
     type: String,
     default: ""
   },
+  icon: {
+    type: String,
+    default: ""
+  },
   simple: {
     type: Boolean,
     default: false
@@ -51,8 +55,13 @@ onUnmounted(() => {
 
 <template>
   <div class="flex relative select-none" ref="dropdown">
-    <Button class="!w-full" v-if="props.text" @click.stop="active = !active" type="button">
-      {{props.text}}
+    <Button class="!w-full" v-if="!text && icon" :icon="icon" @click.stop="active = !active" type="button">
+      <template v-slot:tailing_icon>
+        <span class="material-symbols-rounded fill" :class="{'rotate-180': active}">arrow_drop_down</span>
+      </template>
+    </Button>
+    <Button class="!w-full" v-else-if="text || icon" :icon="icon" @click.stop="active = !active" type="button">
+      <template v-if="text && text.trim() !== ''">{{ text }}</template>
 
       <template v-slot:tailing_icon>
         <span class="material-symbols-rounded fill" :class="{'rotate-180': active}">arrow_drop_down</span>
