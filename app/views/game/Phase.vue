@@ -15,7 +15,11 @@ const phases = {
 }
 
 async function updatePhase(key: string) {
-  props.socket.emit("updatePhase", key)
+  if(key == "BUZZER") {
+    props.socket.emit("launchBuzzerQuestion")
+  } else {
+    props.socket.emit("updatePhase", key)
+  }
 }
 </script>
 

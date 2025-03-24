@@ -44,6 +44,10 @@ async function changePhase() {
   })
 }
 
+async function moreBuzzer() {
+  props.socket.emit("launchBuzzerQuestion")
+}
+
 </script>
 
 <template>
@@ -77,7 +81,7 @@ async function changePhase() {
       Continuar
     </Button>
 
-    <Button @click="goToOptions"
+    <Button @click="round.phase == 'BUZZER' ? moreBuzzer() : goToOptions()"
             class="danger"
             v-if="round.status == 'SHOW_TEAMS'">
       Continuar

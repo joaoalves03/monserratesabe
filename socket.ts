@@ -73,13 +73,12 @@ export const initIO = (httpServer: HttpServer) => {
                         .select('rq.question_id')
                         .from(RoundQuestion, 'rq')
                         .where('rq.round_id = :roundId', { roundId: round.id })
-                        .andWhere('rq.round_game = :roundGame', { roundGame: round.round_game })
                         .getQuery()
                     return `question.id NOT IN ${subQueryBuilder}`
                 })
                 .orderBy('RANDOM()')
                 .limit(1)
-                .getOne();
+                .getOne()
 
             await roundRepository.update({id: socket.data.gameId}, {
                 status: "SELECT_ANSWER",
@@ -88,6 +87,38 @@ export const initIO = (httpServer: HttpServer) => {
 
             io.to(`game-${socket.data.gameId}`).emit("updateState", {
                 status: "SELECT_ANSWER",
+                selected_question: question.id
+            })
+        })
+
+        socket.on('launchBuzzerQuestion', async() => {
+            const round = await roundRepository.findOne({where: {id: socket.data.gameId}})
+            const question = await questionRepository
+                .createQueryBuilder('question')
+                .andWhere(subQuery => {
+                    const subQueryBuilder = subQuery
+                        .subQuery()
+                        .select('rq.question_id')
+                        .from(RoundQuestion, 'rq')
+                        .where('rq.round_id = :roundId', { roundId: round.id })
+                        .getQuery()
+                    return `question.id NOT IN ${subQueryBuilder}`
+                })
+                .orderBy('RANDOM()')
+                .limit(1)
+                .getOne()
+
+            await roundRepository.update({id: socket.data.gameId}, {
+                status: "SELECT_ANSWER",
+                phase: "BUZZER",
+                selected_team: null,
+                selected_question: question.id
+            })
+
+            io.to(`game-${socket.data.gameId}`).emit("updateState", {
+                status: "SELECT_ANSWER",
+                phase: "BUZZER",
+                selected_team: null,
                 selected_question: question.id
             })
         })
