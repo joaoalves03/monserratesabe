@@ -48,9 +48,15 @@ async function changePhase() {
 
 <template>
   <div class="absolute z-50 top-1 right-1 flex gap-1">
-    <Button @click="goToOptions" class="danger" v-if="round.status == 'SELECT_TEAM'">
-      Confirmar
-    </Button>
+    <template v-if="round.status == 'SELECT_TEAM'">
+      <Button @click="changePhase" class="danger" v-if="round.phase == 'TEAM_CHALLENGE'">
+        Próxima fase
+      </Button>
+
+      <Button @click="goToOptions" class="danger" v-else>
+        Confirmar
+      </Button>
+    </template>
 
     <Button @click="launchQuestion"
             :disabled="round.selected_category == null"
