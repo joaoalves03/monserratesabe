@@ -112,6 +112,7 @@ export const initIO = (httpServer: HttpServer) => {
                 status: "SELECT_ANSWER",
                 phase: "BUZZER",
                 selected_team: null,
+                selected_answer: null,
                 selected_question: question.id
             })
 
@@ -119,6 +120,7 @@ export const initIO = (httpServer: HttpServer) => {
                 status: "SELECT_ANSWER",
                 phase: "BUZZER",
                 selected_team: null,
+                selected_answer: null,
                 selected_question: question.id
             })
         })
