@@ -18,6 +18,10 @@ const round: Ref<Round | undefined> = ref(undefined)
 let socket = io("/")
 
 onMounted(async () => {
+  if(profile.data === undefined) {
+    await profile.fetch()
+  }
+
   if(!socket) socket = io("/")
   socket.emit("joinGame", route.params.id)
 
@@ -27,8 +31,6 @@ onMounted(async () => {
     } else {
       round.value = {...round.value, ...state}
     }
-
-    console.log(round.value)
   })
 })
 </script>
