@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import {Socket} from "socket.io-client"
-import {computed, onMounted, PropType, ref, useTemplateRef} from "vue"
+import {onMounted, PropType, ref} from "vue"
 import {Round} from "@/models/round.js"
 import Button from "@/components/Button.vue"
-
-const editPointsDialog = useTemplateRef("editPointsDialog")
+import Modal from "@/components/Modal.vue";
 
 const props = defineProps({
   socket: {
@@ -14,9 +13,14 @@ const props = defineProps({
   round: {
     type: Object as PropType<Round>,
     required: true
+  },
+  visible: {
+    type: Boolean,
+    default: false
   }
 })
 
+const emit = defineEmits(["close"])
 const teamPoints = ref({})
 
 onMounted(() => {
@@ -24,24 +28,18 @@ onMounted(() => {
     teamPoints.value[team_data.team.id] = team_data.score
   })
 })
-
-defineExpose({ show, close })
-
-function show() {
-  editPointsDialog.value.show()
-}
-
 function close() {
-  editPointsDialog.value.close()
+  emit("close")
 }
 
 function save() {
   props.socket.emit("updateTeamPoints", teamPoints.value)
+  close()
 }
 </script>
 
 <template>
-  <dialog ref="editPointsDialog" class="rounded-lg p-8">
+  <Modal :visible="visible" @close="close()" title="Adicionar Pontos">
     <div v-for="team_data in props.round.round_teams"
          class="mb-2 flex w-full items-center gap-2">
       <p class="w-1/3 truncate">{{ team_data.team.team_name }}</p>
@@ -51,10 +49,10 @@ function save() {
     </div>
 
     <div class="flex w-full justify-end gap-2">
-      <Button class="danger" @click="close">Cancelar</Button>
+      <Button class="danger" @click="close()">Cancelar</Button>
       <Button @click="save">Guardar</Button>
     </div>
-  </dialog>
+  </Modal>
 </template>
 
 <style scoped>
