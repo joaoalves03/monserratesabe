@@ -11,7 +11,6 @@ let io: Server
 export const initIO = (httpServer: HttpServer) => {
     const roundRepository = AppDataSource.getRepository(Round)
     const questionRepository = AppDataSource.getRepository(Question)
-    const roundQuestionRepository = AppDataSource.getRepository(RoundQuestion)
 
     io = new Server(httpServer, {
         cors: {
@@ -32,6 +31,7 @@ export const initIO = (httpServer: HttpServer) => {
                 'round_questions',
                 'round_teams',
                 'round_teams.team',
+                'round_teams.team.members',
                 'round_categories'
             ]})
 
@@ -94,8 +94,6 @@ export const initIO = (httpServer: HttpServer) => {
 
         socket.on('submitAnswer', async () => {
             // TODO: MODIFY TEAM POINTS
-
-            const round = await roundRepository.findOne({where: {id: socket.data.gameId}})
 
             await roundRepository.update({id: socket.data.gameId}, {
                 status: "SHOW_ANSWER"

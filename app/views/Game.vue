@@ -34,20 +34,18 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="relative">
+  <div class="relative flex flex-col w-screen h-screen">
     <OperatorDropdown v-if="profile.data" :socket="socket" :round="round" />
 
     <div v-if="!round">Loading...</div>
 
     <Phase v-else-if="round.status == 'SELECT_PHASE'" :socket="socket" />
-    <Team v-else-if="round.status == 'SELECT_TEAM' || round.status == 'SHOW_TEAMS'"
-          :socket="socket" :round="round" />
     <Options v-else-if="round.status == 'SELECT_OPTIONS'"
              :socket="socket" :round="round" />
     <Question v-else-if="round.status == 'SELECT_ANSWER' || round.status == 'SHOW_ANSWER'"
               :socket="socket" :round="round" />
 
-    <div v-else>Not implemented</div>
+    <Team :socket="socket" :round="round" />
   </div>
 </template>
 

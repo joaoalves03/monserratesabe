@@ -4,7 +4,6 @@ import {onMounted, PropType, Ref, ref, watch} from "vue"
 import {Category} from "@/models/category.js"
 import {Round} from "@/models/round.js"
 import axios from "axios"
-import SmallTeamSelect from "@/components/SmallTeamSelect.vue"
 import Button from "@/components/Button.vue"
 import {useProfileStore} from "@/stores/profile.js"
 
@@ -65,7 +64,6 @@ async function selectCategory(id: number) {
         </Button>
       </div>
     </div>
-    <SmallTeamSelect :socket="socket" :selected-team="round.selected_team" :teams="round.round_teams"  />
   </div>
 
 </template>
