@@ -16,6 +16,12 @@ router.get("/", async (req, res) => {
     res.send(await categoryRepository.find())
 })
 
+router.get("/:id", async (req, res) => {
+    const categoryRepository = AppDataSource.getRepository(Category)
+
+    res.send(await categoryRepository.findOne({where: {id: Number(req.params.id)}}))
+})
+
 router.get("/used/:id", async (req, res) => {
     const roundCategoryRepository = AppDataSource.getRepository(RoundCategory)
     const roundRepository = AppDataSource.getRepository(Round)

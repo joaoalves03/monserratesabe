@@ -54,7 +54,11 @@ const route = () => {
 }
 
 .button.danger{
-  @apply bg-red-500 shadow-red-700 hover:bg-red-400 ;
+  @apply bg-red-500 shadow-red-700 hover:bg-red-400;
+}
+
+.button.selected{
+  @apply bg-yellow-500 shadow-yellow-700 hover:bg-yellow-400;
 }
 
 .button.disabled{
