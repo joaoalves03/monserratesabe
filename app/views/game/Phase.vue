@@ -15,6 +15,19 @@ const phases = {
 }
 
 async function updatePhase(key: string) {
+  if(key == "QUESTIONS" || key == "BUZZER") {
+    let number_of_questions: any
+
+    do {
+      number_of_questions = parseInt(prompt("Número de perguntas"))
+    } while (isNaN(number_of_questions))
+
+    props.socket.emit("updateRound", {
+      current_question_number: 0,
+      max_questions: number_of_questions
+    })
+  }
+
   if(key == "BUZZER") {
     props.socket.emit("launchBuzzerQuestion")
   } else {

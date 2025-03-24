@@ -84,12 +84,18 @@ export const initIO = (httpServer: HttpServer) => {
 
             await roundRepository.update({id: socket.data.gameId}, {
                 status: "SELECT_ANSWER",
-                selected_question: question.id
+                selected_question: question.id,
+                current_question_number: () => `current_question_number + 1`
+            })
+
+            const updatedRound = await roundRepository.findOne({
+                where: { id: socket.data.gameId }
             })
 
             io.to(`game-${socket.data.gameId}`).emit("updateState", {
                 status: "SELECT_ANSWER",
-                selected_question: question.id
+                selected_question: question.id,
+                current_question_number: updatedRound.current_question_number
             })
         })
 
@@ -115,7 +121,12 @@ export const initIO = (httpServer: HttpServer) => {
                 phase: "BUZZER",
                 selected_team: null,
                 selected_answer: null,
-                selected_question: question.id
+                selected_question: question.id,
+                current_question_number: () => `current_question_number + 1`
+            })
+
+            const updatedRound = await roundRepository.findOne({
+                where: { id: socket.data.gameId }
             })
 
             io.to(`game-${socket.data.gameId}`).emit("updateState", {
@@ -123,7 +134,8 @@ export const initIO = (httpServer: HttpServer) => {
                 phase: "BUZZER",
                 selected_team: null,
                 selected_answer: null,
-                selected_question: question.id
+                selected_question: question.id,
+                current_question_number: updatedRound.current_question_number
             })
         })
 
@@ -144,12 +156,7 @@ export const initIO = (httpServer: HttpServer) => {
         })
 
         socket.on('updateTeamPoints', async (val: Object) => {
-            console.log(val)
-
             for(let index of Object.keys(val)) {
-                console.log(index)
-                console.log(val[index])
-
                 await roundTeamRepository.update(
                     {
                         team_id: Number(index),

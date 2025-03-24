@@ -56,6 +56,12 @@ export class Round {
     @Column("int", { default: 0 })
     round_game!: number
 
+    @Column("int", { default: 0 })
+    current_question_number!: number
+
+    @Column("int", { default: 0 })
+    max_questions!: number
+
     @OneToMany(() => RoundQuestion, roundQuestion => roundQuestion.round)
     round_questions!: RoundQuestion[]
 

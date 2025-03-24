@@ -11,5 +11,7 @@ export interface Round {
     selected_question: number,
     selected_category: number,
     selected_answer: number,
+    current_question_number: number,
+    max_questions: number,
     round_teams: TeamDTO[]
 }
