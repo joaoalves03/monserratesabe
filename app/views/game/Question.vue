@@ -7,6 +7,9 @@ import axios from "axios"
 import {Category} from "@/models/category.js"
 import Answer from "@/components/Answer.vue"
 import {calculateFontSize} from "@/util.js"
+import {useProfileStore} from "@/stores/profile.js"
+
+const profile = useProfileStore()
 
 const props = defineProps({
   socket: {
@@ -99,6 +102,8 @@ async function next() {
         <p>NUMERO PERGUNTA</p>
         <p>•</p>
         <p>{{category.name}}</p>
+        <p>•</p>
+        <p v-if="profile.data">{{question.id}}</p>
 <!--        <template v-if="operador">-->
 <!--          <p>•</p>-->
 <!--          <p>{{pergunta.id}}</p>-->
