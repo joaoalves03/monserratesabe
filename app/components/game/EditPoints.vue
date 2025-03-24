@@ -33,7 +33,7 @@ function close() {
 }
 
 function save() {
-  props.socket.emit("updateTeamPoints", teamPoints.value)
+  props.socket.emit("updateTeamPoints", false, teamPoints.value)
   close()
 }
 </script>

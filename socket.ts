@@ -1,4 +1,4 @@
-import { Server } from 'socket.io'
+import {Server} from 'socket.io'
 import { Server as HttpServer } from "node:http"
 import {AppDataSource} from "./data-source.js"
 import {Round} from "./entities/Round.js"
@@ -6,14 +6,42 @@ import type {GamePhase} from "./entities/Round.js"
 import {Question} from "./entities/Question.js"
 import {RoundQuestion} from "./entities/RoundQuestion.js"
 import {RoundTeam} from "./entities/RoundTeam.js"
+import {Answer} from "./entities/Answer.js"
 
 let io: Server
 
-export const initIO = (httpServer: HttpServer) => {
-    const roundRepository = AppDataSource.getRepository(Round)
-    const roundTeamRepository = AppDataSource.getRepository(RoundTeam)
-    const questionRepository = AppDataSource.getRepository(Question)
+const roundRepository = AppDataSource.getRepository(Round)
+const roundTeamRepository = AppDataSource.getRepository(RoundTeam)
+const questionRepository = AppDataSource.getRepository(Question)
+const answerRepository = AppDataSource.getRepository(Answer)
 
+async function updateTeamPoints(increase: boolean, val: Object, socket: any) {
+    for(let index of Object.keys(val)) {
+        await roundTeamRepository.update(
+            {
+                team_id: Number(index),
+                round_id: Number(socket.data.gameId)
+            },
+            {
+                score: increase ? () => `score + ${val[index]}` : val[index]
+            }
+        )
+    }
+
+    io.to(`game-${socket.data.gameId}`)
+        .emit("updateState",
+            await roundRepository.findOne({
+                where: {id: socket.data.gameId}, relations: [
+                    'round_questions',
+                    'round_teams',
+                    'round_teams.team',
+                    'round_teams.team.members',
+                    'round_categories'
+                ]
+            }))
+}
+
+export const initIO = (httpServer: HttpServer) => {
     io = new Server(httpServer, {
         cors: {
             origin: '*'
@@ -141,13 +169,35 @@ export const initIO = (httpServer: HttpServer) => {
 
         socket.on('submitAnswer', async () => {
             // TODO: MODIFY TEAM POINTS
-            // +20 -10
-
-            //roundTeamRepository.update()
+            // Normal +10 -5
+            // Buzzer +20 -10
 
             await roundRepository.update({id: socket.data.gameId}, {
                 status: "SHOW_ANSWER"
             })
+
+            const round = await roundRepository.findOne({where: {id: socket.data.gameId}})
+
+            const isCorrect = (await answerRepository.exists({
+                where: {
+                    id: round.selected_answer,
+                    question: { id: round.selected_question },
+                    is_correct: true
+                },
+            }))
+
+            if(round.selected_team) {
+                const teamScore = {}
+                if(isCorrect) {
+                    teamScore[round.selected_team]
+                        = round.phase == "BUZZER" ? 20 : 10
+                } else {
+                    teamScore[round.selected_team]
+                        = round.phase == "BUZZER" ? -10 : -5
+                }
+
+                await updateTeamPoints(true, teamScore, socket)
+            }
 
             io.to(`game-${socket.data.gameId}`).emit("revealAnswer")
             io.to(`game-${socket.data.gameId}`).emit("updateState", {
@@ -155,30 +205,8 @@ export const initIO = (httpServer: HttpServer) => {
             })
         })
 
-        socket.on('updateTeamPoints', async (val: Object) => {
-            for(let index of Object.keys(val)) {
-                await roundTeamRepository.update(
-                    {
-                        team_id: Number(index),
-                        round_id: Number(socket.data.gameId)
-                    },
-                    {
-                        score: val[index]
-                    }
-                )
-            }
-
-            io.to(`game-${socket.data.gameId}`)
-                .emit("updateState",
-                    await roundRepository.findOne({
-                        where: {id: socket.data.gameId}, relations: [
-                            'round_questions',
-                            'round_teams',
-                            'round_teams.team',
-                            'round_teams.team.members',
-                            'round_categories'
-                        ]
-                    }))
+        socket.on('updateTeamPoints', async (increase: boolean, val: Object) => {
+            await updateTeamPoints(increase, val, socket)
         })
     })
 
