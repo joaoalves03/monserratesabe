@@ -111,7 +111,7 @@ async function next() {
     </div>
     <div class="relative flex items-center justify-center max-h-full w-full my-auto">
 <!--        <img v-if="informacaoJogo.pergunta.imagem != null" class="rounded bg-white p-2 w-auto object-contain max-h-[25vh]" :src="informacaoJogo.pergunta.imagem"/>-->
-      <img class="rounded p-2 w-auto object-contain max-h-[25vh]" src="@/assets/ConcursoMonserrateSabe.png"/>
+      <img class="rounded p-2 w-auto object-contain max-h-[25vh]" src="@/assets/logo.png"/>
     </div>
   </div>
 

@@ -38,6 +38,12 @@ async function goToTeamView() {
   })
 }
 
+async function changePhase() {
+  props.socket.emit("updateRound", {
+    status: "SELECT_PHASE"
+  })
+}
+
 </script>
 
 <template>
@@ -72,10 +78,10 @@ async function goToTeamView() {
     </Button>
 
     <Dropdown text="Opções">
-      <DropdownItem @click="" icon="person_add">Alterar Fase</DropdownItem>
-      <DropdownItem @click="" icon="person_add">Editar Pontos</DropdownItem>
-      <DropdownItem @click="" icon="person_add">Acabar Jogo</DropdownItem>
-      <DropdownItem @click="" icon="person_add">Sair</DropdownItem>
+      <DropdownItem @click="changePhase" icon="edit">Alterar Fase</DropdownItem>
+      <DropdownItem @click="" icon="tune">Editar Pontos</DropdownItem>
+      <DropdownItem @click="" icon="sports_score">Acabar Jogo</DropdownItem>
+      <DropdownItem path="/" icon="logout">Sair</DropdownItem>
     </Dropdown>
   </div>
 </template>
