@@ -5,11 +5,13 @@ import {Round} from "./entities/Round.js"
 import type {GamePhase} from "./entities/Round.js"
 import {Question} from "./entities/Question.js"
 import {RoundQuestion} from "./entities/RoundQuestion.js"
+import {RoundTeam} from "./entities/RoundTeam.js"
 
 let io: Server
 
 export const initIO = (httpServer: HttpServer) => {
     const roundRepository = AppDataSource.getRepository(Round)
+    const roundTeamRepository = AppDataSource.getRepository(RoundTeam)
     const questionRepository = AppDataSource.getRepository(Question)
 
     io = new Server(httpServer, {
@@ -127,6 +129,9 @@ export const initIO = (httpServer: HttpServer) => {
 
         socket.on('submitAnswer', async () => {
             // TODO: MODIFY TEAM POINTS
+            // +20 -10
+
+            //roundTeamRepository.update()
 
             await roundRepository.update({id: socket.data.gameId}, {
                 status: "SHOW_ANSWER"
@@ -136,6 +141,37 @@ export const initIO = (httpServer: HttpServer) => {
             io.to(`game-${socket.data.gameId}`).emit("updateState", {
                 status: "SHOW_ANSWER"
             })
+        })
+
+        socket.on('updateTeamPoints', async (val: Object) => {
+            console.log(val)
+
+            for(let index of Object.keys(val)) {
+                console.log(index)
+                console.log(val[index])
+
+                await roundTeamRepository.update(
+                    {
+                        team_id: Number(index),
+                        round_id: Number(socket.data.gameId)
+                    },
+                    {
+                        score: val[index]
+                    }
+                )
+            }
+
+            io.to(`game-${socket.data.gameId}`)
+                .emit("updateState",
+                    await roundRepository.findOne({
+                        where: {id: socket.data.gameId}, relations: [
+                            'round_questions',
+                            'round_teams',
+                            'round_teams.team',
+                            'round_teams.team.members',
+                            'round_categories'
+                        ]
+                    }))
         })
     })
 

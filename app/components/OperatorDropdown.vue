@@ -4,8 +4,11 @@ import Dropdown from "@/components/Dropdown.vue"
 import Button from "@/components/Button.vue"
 import DropdownItem from "@/components/DropdownItem.vue"
 import {Socket} from "socket.io-client"
-import {PropType} from "vue"
+import {PropType, useTemplateRef} from "vue"
 import {Round} from "@/models/round.js"
+import EditPoints from "@/components/EditPoints.vue"
+
+const editPointsDialog = useTemplateRef("editPointsDialog")
 
 const props = defineProps({
   socket: {
@@ -89,11 +92,13 @@ async function moreBuzzer() {
 
     <Dropdown text="Opções">
       <DropdownItem @click="changePhase" icon="edit">Alterar Fase</DropdownItem>
-      <DropdownItem @click="" icon="tune">Editar Pontos</DropdownItem>
+      <DropdownItem @click="editPointsDialog.show()" icon="tune">Editar Pontos</DropdownItem>
       <DropdownItem @click="" icon="sports_score">Acabar Jogo</DropdownItem>
       <DropdownItem path="/" icon="logout">Sair</DropdownItem>
     </Dropdown>
   </div>
+
+  <EditPoints ref="editPointsDialog" :round="round" :socket="socket" />
 </template>
 
 <style scoped>
