@@ -6,7 +6,7 @@ import DropdownItem from "@/components/DropdownItem.vue"
 import {Socket} from "socket.io-client"
 import {PropType, ref} from "vue"
 import {Round} from "@/models/round.js"
-import EditPoints from "@/components/EditPoints.vue"
+import EditPoints from "@/components/game/EditPoints.vue"
 
 const editPointsModal = ref(false)
 

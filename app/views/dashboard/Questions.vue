@@ -3,7 +3,7 @@ import {onMounted, ref} from "vue"
 import axios from "axios"
 import {Question} from "@/models/question.js";
 import {Category} from "@/models/category.js"
-import DataTable from "@/components/DataTable.vue"
+import DataTable from "@/components/dashboard/DataTable.vue"
 
 const columns = ref([
   { key: 'id', label: 'ID', type: 'number' },

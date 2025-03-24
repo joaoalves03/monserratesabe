@@ -8,7 +8,7 @@ import Team from "@/views/game/Team.vue"
 import Options from "@/views/game/Options.vue"
 import Question from "@/views/game/Question.vue"
 import {useProfileStore} from "@/stores/profile.js"
-import OperatorDropdown from "@/components/OperatorDropdown.vue"
+import OperatorDropdown from "@/components/game/OperatorDropdown.vue"
 
 const route = useRoute()
 const profile = useProfileStore()

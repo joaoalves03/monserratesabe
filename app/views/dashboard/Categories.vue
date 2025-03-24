@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import DataTable from "@/components/DataTable.vue"
+import DataTable from "@/components/dashboard/DataTable.vue"
 import {onMounted, Ref, ref} from "vue"
 import {Category} from "@/models/category.js"
 import axios from "axios"
