@@ -40,7 +40,7 @@ router.post("/", requireAdmin, async (req, res) => {
 
         await AppDataSource.manager.save(category)
 
-        res.sendStatus(200)
+        res.status(201).json(category)
     } catch (error: any) {
         res.status(400).send(error.message)
     }

@@ -6,9 +6,11 @@ import Sidebar from "@/components/dashboard/Sidebar.vue"
 
 <template>
   <Header />
-  <div class="flex flex-row w-full h-full overflow-auto">
+  <div class="flex w-full h-full gap-4 pl-6 overflow-hidden">
     <Sidebar />
-    <router-view class="px-8" />
+    <div class="flex w-full pr-6 overflow-auto">
+      <router-view />
+    </div>
   </div>
 </template>
 

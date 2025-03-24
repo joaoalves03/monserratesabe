@@ -47,7 +47,7 @@ const addAdmin = async () => {
 <template>
   <div class="w-full flex px-4 py-2 justify-between items-center">
     <router-link to="/">
-      <h1 class="text-3xl">Monserrate Sabe</h1>
+      <img class="h-20" src="@/assets/logo.png" alt="MonserrateSabe">
     </router-link>
 
 

@@ -9,17 +9,41 @@ const columns = ref([
   { key: 'name', label: 'Nome' }
 ])
 
-const categories: Ref<Category> = ref([])
+const categories: Ref<Category[]> = ref([])
 
 onMounted(async () => {
-  categories.value = (await axios.get("/api/categories")).data
+  categories.value = (await axios.get("/api/category")).data
 })
 
-function createCategory() {}
+async function createCategory(newCategory: Category) {
+  try {
+    const response = await axios.post("/api/category", newCategory)
+    categories.value.push(response.data)
+  } catch (error) {
+    console.error("Error creating category:", error)
+  }
+}
 
-function updateCategory() {}
+async function updateCategory(updatedCategory: Category) {
+  try {
+    const response = await axios.put(`/api/category/${updatedCategory.id}`, updatedCategory)
+    const index = categories.value.findIndex(c => c.id === updatedCategory.id)
+    if (index !== -1) {
+      categories.value[index] = response.data
+    }
+  } catch (error) {
+    console.error("Error updating category:", error)
+  }
+}
 
-function deleteCategory() {}
+async function deleteCategory(deletedCategory: Category) {
+  try {
+    await axios.delete(`/api/category/${deletedCategory.id}`)
+    categories.value = categories.value.filter(c => c.id !== deletedCategory.id)
+  } catch (error) {
+    console.error("Error deleting category:", error)
+  }
+}
 </script>
 
 <template>
@@ -34,5 +58,4 @@ function deleteCategory() {}
 </template>
 
 <style scoped>
-
 </style>
