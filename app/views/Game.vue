@@ -49,7 +49,7 @@ onMounted(async () => {
         ? ''
         : 'pointer-events-none'"
   >
-    <OperatorDropdown v-if="profile.data" :socket="socket" :round="round" />
+    <OperatorDropdown v-if="profile.data && round" :socket="socket" :round="round" />
 
     <div v-if="!round">Loading...</div>
 
@@ -62,7 +62,7 @@ onMounted(async () => {
     <Finish v-else-if="round.status == 'SHOW_WINNER'"
               :socket="socket" :round="round" />
 
-    <Team :socket="socket" :round="round" />
+    <Team v-if="round" :socket="socket" :round="round" />
   </div>
 </template>
 
