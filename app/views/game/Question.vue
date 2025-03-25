@@ -27,7 +27,7 @@ const category: Ref<Category | undefined> = ref(undefined)
 const correct_answers: Ref<Number[]> = ref([])
 
 onMounted(async () => {
-  question.value = (await axios.get(`/api/question/${props.round.selected_question}`)).data
+  question.value = (await axios.get(`/api/question/by-round/${props.round.selected_question}/${props.round.id}`)).data
   category.value = (await axios.get(`/api/category/${props.round.selected_category}`)).data
 
   if(question.value.answers[0].is_correct != undefined) {

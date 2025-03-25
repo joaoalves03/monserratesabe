@@ -41,6 +41,9 @@ export class Round {
     })
     phase!: GamePhase | null
 
+    @Column("float", { default: 0, select: false })
+    answer_shuffle_seed!: number
+
     @Column("int", { nullable: true })
     selected_team!: number
 
