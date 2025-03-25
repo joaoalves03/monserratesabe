@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import {Socket} from "socket.io-client"
-import {computed, onMounted, PropType} from "vue"
+import {computed, PropType, ref, watch} from "vue"
 import {Round} from "@/models/round.js"
 import {useProfileStore} from "@/stores/profile.js"
+import Button from "@/components/Button.vue";
 
 const profile = useProfileStore()
 
@@ -17,17 +18,28 @@ const props = defineProps({
   }
 })
 
-const colors = ['red-500','green-500','blue-400']
-
 const hide = computed(() => ["SELECT_PHASE", "SHOW_WINNER"].includes(props.round.status))
 const fullscreen = computed(() => ["SELECT_TEAM", "SHOW_TEAMS"].includes(props.round.status))
 const operatorAndTeamChallenge = computed(() => profile.data && props.round.phase == "TEAM_CHALLENGE")
-const isSelected = (index: number) => index === props.round.selected_team
+const isSelected = (teamId: number) => props.round.selected_team === teamId
+const pointAdjustment = ref<Record<number, number>>({})
+const teamPoints = ref<Record<number, number>>({})
 
+watch(
+    () => props.round?.round_teams,
+    (newTeams) => {
+      if (newTeams) {
+        newTeams.forEach((team_data) => {
+          if (!(team_data.team.id in pointAdjustment.value)) {
+            pointAdjustment.value[team_data.team.id] = 1;
+          }
+          teamPoints.value[team_data.team.id] = team_data.score;
+        });
+      }
+    },
+    { immediate: true, deep: true }
+);
 
-onMounted(() => {
-  console.log(props.round.round_teams)
-})
 async function selectTeam(id: number) {
   if(!profile.data) return
 
@@ -35,25 +47,35 @@ async function selectTeam(id: number) {
     selected_team: id === props.round.selected_team ? null : id
   })
 }
+
+function adjustPoints(teamId: number, isAddition: boolean) {
+  if (!isSelected(teamId)) return
+
+  const adjustment = pointAdjustment.value[teamId] || 1
+  const change = isAddition ? adjustment : -adjustment
+  teamPoints.value[teamId] = props.round.round_teams.find(t => t.team.id === teamId)!.score + change
+
+  props.socket.emit("updateTeamPoints", false, teamPoints.value)
+}
 </script>
 
 <template>
-<!-- This is dumb, too bad! -->
-<div class="hidden bg-red-500 bg-green-500 bg-blue-400 text-red-500 text-green-500 text-blue-400"></div>
-
 <div class="flex w-full select-none" :class="([
     hide ? 'hidden' : '',
     fullscreen ? 'h-full' : 'h-auto'
 ])">
-  <div v-for="(team_data, index) of round.round_teams"
+  <div v-for="team_data of round.round_teams"
        class="flex flex-1 items-center gap-2 p-4 transition-colors"
        :class="([
            fullscreen ? 'flex-col justify-center' : 'justify-between px-8',
            isSelected(team_data.team.id)
-            ? 'bg-' + colors[index] + ' text-white'
+            ? 'text-white'
             : profile.data ? 'hover:bg-black/10' : '',
            profile.data ? 'cursor-pointer' : 'cursor-default',
        ])"
+       :style="{
+            backgroundColor: isSelected(team_data.team.id) ? team_data.color : ''
+       }"
        @click="selectTeam(team_data.team.id)">
 
     <p class="text-4xl font-semibold">{{team_data.team.team_name}}</p>
@@ -67,16 +89,35 @@ async function selectTeam(id: number) {
     <div class="rounded px-2 py-1 transition-colors" :class="isSelected(team_data.team.id) ? 'bg-white' : 'bg-black'">
       <p class="font-bold transition-colors"
          :class="[
-             (isSelected(team_data.team.id) ? 'text-' + colors[index] : 'text-white'),
              (operatorAndTeamChallenge ? 'text-2xl' : 'text-4xl')
-         ]">
+         ]"
+         :style="{
+              color: isSelected(team_data.team.id) ? team_data.color : 'white'
+         }"
+      >
         {{team_data.score}}
       </p>
     </div>
 
     <template v-if="operatorAndTeamChallenge">
-      <div>Placeholder</div>
-<!--      <Desafio :numero="i"/>-->
+      <div class="flex justify-center items-center text-xl gap-2 text-black">
+        <Button
+            icon="remove"
+            :class="isSelected(team_data.team.id) ? '' : 'disabled'"
+            @click.stop="adjustPoints(team_data.team.id, false)"
+        />
+        <input
+            class="text-center appearance-none w-1/4 min-w-16"
+            type="number"
+            min="1"
+            v-model="pointAdjustment[team_data.team.id]"
+        >
+        <Button
+            icon="add"
+            :class="isSelected(team_data.team.id) ? '' : 'disabled'"
+            @click.stop="adjustPoints(team_data.team.id, true)"
+        />
+      </div>
     </template>
   </div>
 </div>
