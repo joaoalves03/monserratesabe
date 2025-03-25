@@ -43,10 +43,10 @@ function goToGame(id: number) {
         <div
             v-for="round in rounds"
             @click="goToGame(round.id)"
-            class="bg-gray-300 rounded-lg w-60 hover:bg-gray-400 hover:cursor-pointer transition-all overflow-hidden"
+            class="relative bg-gray-300 rounded-lg w-60 h-28 flex flex-col justify-between hover:bg-gray-400 hover:cursor-pointer transition-all overflow-hidden"
         >
-          <div class="p-4">
-            <b class="line-clamp-2">{{round.name}}</b>
+          <div class="p-4 text-xl font-semibold">
+            <p class="line-clamp-2">{{round.name}}</p>
           </div>
           <div class="flex">
             <div
@@ -57,6 +57,12 @@ function goToGame(id: number) {
               <p class="truncate w-full text-center px-2">{{team.team.team_name}}</p>
             </div>
           </div>
+
+          <div v-if="round.status === 'SHOW_WINNER'" class="bg-black/10 rounded-md absolute top-0 left-0 w-full h-full flex p-1 justify-end items-start">
+            <div class="stamp">
+              <p class="text-xl font-bold">Finished</p>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -64,5 +70,14 @@ function goToGame(id: number) {
 </template>
 
 <style scoped>
+/* credit https://css-shape.com/stamp/ */
+.stamp{
+  @apply py-2 px-4 bg-red-500 text-white rotate-12 absolute bottom-6 left-4;
 
+  --r: 0.25rem;
+  mask:
+      radial-gradient(var(--r),#0000 97%,#000) round
+      calc(-1.5*var(--r)) calc(-1.5*var(--r))/calc(3*var(--r)) calc(3*var(--r)),
+      linear-gradient(#000, #000) no-repeat 50%/calc(100% - 3*var(--r)) calc(100% - 3*var(--r));
+}
 </style>
