@@ -96,18 +96,25 @@ function adjustPoints(teamId: number, isAddition: boolean) {
          :key="team_data.team.id"
          class="flex flex-1 items-center gap-2 p-4 transition-colors"
          :class="([
-           fullscreen ? 'flex-col justify-center' : 'justify-between px-8',
+           fullscreen ? 'flex-col justify-center' : 'justify-between px-8 truncate',
            isSelected(team_data.team.id)
             ? 'text-white'
             : profile.data ? 'hover:bg-black/10' : '',
            profile.data ? 'cursor-pointer' : 'cursor-default',
        ])"
          :style="{
-            backgroundColor: isSelected(team_data.team.id) ? team_data.color : ''
+            backgroundColor: isSelected(team_data.team.id) ? team_data.color : 'white'
        }"
          @click="selectTeam(team_data.team.id)">
 
-      <p class="text-4xl font-semibold">{{team_data.team.team_name}}</p>
+      <p
+          class="text-4xl font-semibold"
+          :class="[
+              fullscreen ? 'text-center' : 'truncate'
+          ]"
+      >
+        {{team_data.team.team_name}}
+      </p>
 
       <div v-if="fullscreen" class="flex flex-wrap items-center justify-center">
         <p class="bg-black/10 p-2 m-1 rounded-md shadow-md text-2xl" v-for="member in team_data.team.members" :key="member.member_name">
