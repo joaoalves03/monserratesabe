@@ -64,7 +64,7 @@ const route = () => {
 }
 
 .button.disabled{
-  @apply bg-gray-500 shadow-gray-700
+  @apply bg-gray-500 shadow-gray-700 hover:bg-gray-500
   active:translate-y-[0.05rem] active:shadow-[0_0.20rem] active:shadow-gray-700;
 }
 </style>
