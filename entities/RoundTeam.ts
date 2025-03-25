@@ -13,6 +13,9 @@ export class RoundTeam {
     @Column("int", { default: 0 })
     score!: number
 
+    @Column("int", { default: 0 })
+    order!: number
+
     @ManyToOne(() => Round, round => round.round_teams, { onDelete: 'CASCADE' })
     @JoinColumn({ name: "round_id" })
     round!: Round

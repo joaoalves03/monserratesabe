@@ -40,7 +40,12 @@ async function updateTeamPoints(increase: boolean, val: Object, socket: any) {
                     'round_teams.team',
                     'round_teams.team.members',
                     'round_categories'
-                ]
+                ],
+                order: {
+                    round_teams: {
+                        order: "ASC"
+                    },
+                },
             }))
 }
 
@@ -60,13 +65,21 @@ export const initIO = (httpServer: HttpServer) => {
             socket.join(`game-${gameId}`)
             socket.data.gameId = gameId
 
-            const round = await roundRepository.findOne({where: {id: gameId}, relations: [
-                'round_questions',
-                'round_teams',
-                'round_teams.team',
-                'round_teams.team.members',
-                'round_categories'
-            ]})
+            const round = await roundRepository.findOne({
+                where: {id: gameId},
+                relations: [
+                    'round_questions',
+                    'round_teams',
+                    'round_teams.team',
+                    'round_teams.team.members',
+                    'round_categories'
+                ],
+                order: {
+                    round_teams: {
+                        order: "ASC"
+                    },
+                }
+            })
 
             socket.emit("updateState", round)
         })
@@ -92,7 +105,10 @@ export const initIO = (httpServer: HttpServer) => {
                 })
             }
 
-            const round = await roundRepository.findOne({where: {id: socket.data.gameId}})
+            const round = await roundRepository.findOne({
+                where: {id: socket.data.gameId},
+                order: { round_teams: { order: "ASC" } }
+            })
 
             io.to(`game-${socket.data.gameId}`).emit("updateState", round)
         })

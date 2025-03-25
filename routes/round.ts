@@ -20,7 +20,8 @@ router.get("/", async (req, res) => {
                 'round_teams',
                 'round_teams.team',
                 'round_categories'
-            ]
+            ],
+            order: { round_teams: { order: "ASC" } }
         })
 
         res.status(200).json(rounds)
@@ -60,11 +61,12 @@ router.post("/", requireAdmin, async (req, res) => {
             }
         }
 
-        const roundTeams = teams.map(team => {
+        const roundTeams = teams.map((team, index) => {
             const roundTeam = new RoundTeam()
             roundTeam.round = savedRound
             roundTeam.team_id = team.team_id
             roundTeam.color = team.color
+            roundTeam.order = index
             return roundTeam
         })
 
@@ -72,7 +74,12 @@ router.post("/", requireAdmin, async (req, res) => {
 
         const completeRound = await roundRepository.findOne({
             where: { id: savedRound.id },
-            relations: ['round_teams']
+            relations: ['round_teams'],
+            order: {
+                round_teams: {
+                    order: "ASC"
+                },
+            }
         })
 
         res.status(201).json(completeRound)

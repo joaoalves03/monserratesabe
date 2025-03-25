@@ -45,7 +45,7 @@ router.get("/used/:id", async (req, res) => {
             .leftJoin(
                 RoundQuestion,
                 "round_question",
-                "round_question.question_id = question.id AND round_question.round_id = :roundId AND round_question.team_id = :teamId",
+                "round_question.question_id = question.id AND round_question.round_id = :roundId",
                 { roundId: round?.id, teamId: round?.selected_team }
             )
             .where("question.category.id = :categoryId", { categoryId })
