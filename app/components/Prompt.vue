@@ -54,7 +54,7 @@ export default defineComponent({
     <div class="flex flex-col gap-2">
       <p class="text-lg">{{ state.message }}</p>
       <template v-if="state.type === 'ask'">
-        <input v-model="input" placeholder="Type your response..." />
+        <input v-model="input" @keyup.enter="submit" placeholder="Type your response..." />
       </template>
     </div>
 

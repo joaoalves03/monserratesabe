@@ -16,11 +16,12 @@ const emit = defineEmits()
 
 const closeModal = () => {
   emit('close')
+  console.log("LOL")
 }
 </script>
 
 <template>
-  <div v-if="props.visible" class="modal" @click="closeModal">
+  <div v-if="props.visible" class="modal" @click="closeModal" @keyup.esc="closeModal">
     <div class="content" @click.stop>
       <div v-if="props.title" class="w-full flex justify-between items-center gap-6">
         <h1 class="text-3xl">{{props.title}}</h1>

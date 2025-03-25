@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {defineEmits, defineProps, reactive, ref} from 'vue'
+import {defineEmits, defineProps, reactive, ref, nextTick} from 'vue'
 import Button from "@/components/Button.vue";
 import Modal from "@/components/Modal.vue";
 import {prompt} from "@/plugins/prompt.js";
@@ -26,8 +26,9 @@ const isEditing = ref(false)
 const currentItem = reactive({})
 const itemToDelete = ref(null)
 const form = ref<HTMLFormElement | null>(null)
+const inputs = ref<HTMLInputElement[]>([])
 
-const getCellValue = (item: any, column: Column) => {
+const getCellValue = (item: any, column: any) => {
   if (column.options) {
     const value = getNestedValue(item, column.path || '');
     const option = column.options.find((opt: any) => opt.id === value);
@@ -64,10 +65,16 @@ const updateNestedValue = (obj: any, path: string, value: any) => {
   current[parts[parts.length - 1]] = value;
 }
 
-const showAddForm = () => {
+const showAddForm = async () => {
   isEditing.value = false
   Object.assign(currentItem, getEmptyItem())
   showModal.value = true
+
+  await nextTick(() => {
+    if (inputs.value && inputs.value.length > 0) {
+      inputs.value[0].focus()
+    }
+  })
 }
 
 const editItem = (item) => {
@@ -132,6 +139,7 @@ const closeModal = () => {
   Object.keys(currentItem).forEach(key => {
     delete currentItem[key]
   })
+  inputs.value = []
 }
 
 const getEmptyItem = () => {
@@ -159,6 +167,12 @@ const getEmptyItem = () => {
   })
 
   return item
+}
+
+const addInputRef = (el: HTMLInputElement | null) => {
+  if (el) {
+    inputs.value.push(el)
+  }
 }
 </script>
 
@@ -209,7 +223,6 @@ const getEmptyItem = () => {
     <Modal :visible="showModal" @close="closeModal" :title="isEditing ? 'Edit Item' : 'Add New Item'">
       <form ref="form" @submit.prevent="saveItem">
         <div v-for="column in columns" :key="`form-${column.key}`" class="space-y-1">
-
           <template v-if="column.key !== 'id'">
             <label :for="column.key" class="block text-sm font-medium text-gray-700">{{ column.label }}</label>
 
@@ -220,6 +233,7 @@ const getEmptyItem = () => {
                   @change="updateNestedValue(currentItem, column.path, $event.target.value)"
                   class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   :required="column.required"
+                  :ref="addInputRef"
               >
                 <option value="">Select a category</option>
                 <option
@@ -239,6 +253,7 @@ const getEmptyItem = () => {
                   :type="column.type || 'text'"
                   class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   :required="column.required"
+                  :ref="addInputRef"
               />
             </template>
             <template v-else>
@@ -248,6 +263,7 @@ const getEmptyItem = () => {
                   :type="column.type || 'text'"
                   class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   :required="column.required"
+                  :ref="addInputRef"
               />
             </template>
           </template>
