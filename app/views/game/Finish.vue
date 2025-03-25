@@ -20,6 +20,12 @@ const minHeight = 15
 const heights = ref<Record<string, number>>({})
 const scores = ref<Record<string, number>>({})
 
+const medalColors = {
+  1: 'bg-yellow-400',
+  2: 'bg-gray-400',
+  3: 'bg-amber-600'
+}
+
 const sortedTeams = computed(() => {
   if (!props.round?.round_teams) return []
 
@@ -95,6 +101,15 @@ function animatePodium() {
   })
 }
 
+function calculateBrightness(position: number, totalTeams: number) {
+  if (totalTeams <= 1) return 1;
+  return 1 - (0.3 * (position - 1) / (totalTeams - 1));
+}
+
+function calculateZIndex(position: number, totalTeams: number) {
+  return totalTeams - position + 1;
+}
+
 watch(() => props.round?.round_teams, () => {
   animatePodium()
 }, { immediate: true })
@@ -105,7 +120,6 @@ watch(() => props.round?.round_teams, () => {
     <div class="fixed top-12 text-center flex flex-col justify-center items-center">
       <div v-if="winningTeam" class="flex flex-col justify-center items-center w-fit gap-1 bg-primary-400 p-2 rounded-2xl text-center text-white font-bold">
         <h1 class="text-xl">Equipa Vencedora:</h1>
-
         <div class="flex gap-4">
           <div v-for="(word, wordIndex) in winningTeam.name.split(' ')" :key="wordIndex" class="flex items-center">
             <div class="word text-6xl flex">
@@ -121,9 +135,6 @@ watch(() => props.round?.round_teams, () => {
           </div>
         </div>
       </div>
-
-
-
 
       <div v-if="winningTeam" class="flex justify-center gap-2 text-4xl px-4">
         <p
@@ -141,21 +152,37 @@ watch(() => props.round?.round_teams, () => {
 
     <div class="flex fixed -bottom-1 w-2/3 items-end">
       <template v-for="team in sortedTeams" :key="team.name">
-        <div class="flex flex-col w-1/3 justify-center items-center">
-          <p class="mb-2" :class="team.position === 1 ? 'text-8xl p-1 font-bold rounded-2xl bg-yellow-400 text-white' : 'text-6xl'">
-            {{ team.position }}
-          </p>
+        <div
+            class="flex flex-col w-1/3 justify-center items-center"
+            :style="{
+              filter: `brightness(${calculateBrightness(team.position, sortedTeams.length)})`,
+              zIndex: `${calculateZIndex(team.position, sortedTeams.length)}`
+            }"
+        >
           <div
-              class="shadow-xl text-4xl rounded-md flex flex-col justify-center items-center text-white"
+              class="flex justify-center items-center h-fit aspect-square p-2 mb-2 rounded-2xl"
+              :class="[
+                team.position <= 3 ? medalColors[team.position] : 'bg-primary-500/80',
+                team.position === 1 ? 'text-6xl p-1 font-bold' : 'text-4xl',
+                'text-white shadow-md'
+              ]"
+          >
+            <p>
+              {{ team.position }}
+            </p>
+          </div>
+
+          <div
+              class="text-4xl rounded-md flex flex-col justify-center items-center text-white"
               :class="team.position === 1
-              ? 'w-[120%] z-10'
+              ? 'w-[120%] shadow-xl'
               : 'w-full'"
               :style="{
                 height: `${heights['position' + team.position]}vh`,
-                backgroundColor: team.color
+                backgroundColor: team.color,
               }"
           >
-            <p class="font-bold">{{ team.name }}</p>
+            <p class="font-bold text-center">{{ team.name }}</p>
             <p class="text-center">{{ scores['position' + team.position]?.toFixed(0) }} pontos</p>
           </div>
         </div>
