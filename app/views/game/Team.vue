@@ -60,7 +60,7 @@ watch(
       }
     },
     { immediate: true, deep: true }
-);
+)
 
 async function selectTeam(id: number) {
   if(!profile.data) return
@@ -88,9 +88,9 @@ function adjustPoints(teamId: number, isAddition: boolean) {
 </script>
 
 <template>
-  <div class="flex w-full select-none" :class="([
+  <div class="mt-auto flex w-full select-none transition-height duration-1000 ease-in-out" :class="([
     hide ? 'hidden' : '',
-    fullscreen ? 'h-full' : 'h-auto'
+    fullscreen ? 'h-screen' : 'h-24'
 ])">
     <div v-for="team_data of round.round_teams"
          :key="team_data.team.id"

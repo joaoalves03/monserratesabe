@@ -7,6 +7,9 @@ export default {
   theme: {
     extend: {
       colors: {
+        transitionProperty: {
+          'height': 'height'
+        },
         primary: {
           100: 'hsl(216, 100%, 90%)',
           200: 'hsl(216, 100%, 80%)',
