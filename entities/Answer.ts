@@ -21,20 +21,20 @@ export class Answer {
 }
 
 export const CreateAnswerSchema = z.object({
-    answer_text: z.string().min(1, "Answer text is required"),
+    answer_text: z.string(),
     is_correct: z.boolean().default(false),
     image_url: z.string().nullable().optional(),
     question_id: z.number({ required_error: "Question ID is required" })
 })
 
 export const CreateQuestionAnswerSchema = z.object({
-    answer_text: z.string().min(1, "Answer text is required"),
+    answer_text: z.string(),
     is_correct: z.boolean().default(false),
     image_url: z.string().nullable().optional()
 })
 
 export const UpdateAnswerSchema = z.object({
-    answer_text: z.string().min(1).optional(),
+    answer_text: z.string().optional(),
     image_url: z.string().nullable().optional(),
     is_correct: z.boolean().optional()
 })

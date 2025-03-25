@@ -153,6 +153,7 @@ export const initIO = (httpServer: HttpServer) => {
             const round = await roundRepository.findOne({where: {id: socket.data.gameId}})
             const question = await questionRepository
                 .createQueryBuilder('question')
+                .leftJoinAndSelect('question.category', 'category')
                 .andWhere(subQuery => {
                     const subQueryBuilder = subQuery
                         .subQuery()
@@ -176,6 +177,7 @@ export const initIO = (httpServer: HttpServer) => {
                 phase: "BUZZER",
                 selected_team: null,
                 selected_answer: null,
+                selected_category: question.category.id,
                 selected_question: question.id,
                 current_question_number: () => `current_question_number + 1`,
                 answer_shuffle_seed: Math.random()
@@ -190,6 +192,7 @@ export const initIO = (httpServer: HttpServer) => {
                 phase: "BUZZER",
                 selected_team: null,
                 selected_answer: null,
+                selected_category: question.category.id,
                 selected_question: question.id,
                 current_question_number: updatedRound.current_question_number
             })

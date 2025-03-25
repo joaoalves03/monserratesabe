@@ -8,7 +8,7 @@ export class Question {
     @PrimaryGeneratedColumn()
     id!: number
 
-    @Column("text")
+    @Column("text", { default: "" })
     question!: string
 
     @Column("text", { nullable: true })
@@ -22,7 +22,7 @@ export class Question {
 }
 
 export const CreateQuestionSchema = z.object({
-    question: z.string().min(1, "Question text is required"),
+    question: z.string(),
     image_url: z.string().nullable().optional(),
     category_id: z.number({ required_error: "Category ID is required" }),
     answers: z.array(CreateQuestionAnswerSchema).min(1, "At least one answer is required")

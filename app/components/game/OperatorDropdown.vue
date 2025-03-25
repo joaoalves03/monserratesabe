@@ -23,7 +23,8 @@ const props = defineProps({
 
 async function goToOptions() {
   props.socket.emit("updateRound", {
-    status: "SELECT_OPTIONS"
+    status: "SELECT_OPTIONS",
+    selected_category: null
   })
 }
 

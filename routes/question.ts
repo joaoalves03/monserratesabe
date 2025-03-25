@@ -138,6 +138,7 @@ router.post('/', requireAdmin, async (req, res) => {
                 id: question.id,
                 answer_text: answer.answer_text,
                 image_url: answer.image_url,
+                is_correct: answer.is_correct,
                 question: {
                     id: question.id,
                 }
@@ -146,8 +147,8 @@ router.post('/', requireAdmin, async (req, res) => {
 
         res.status(201).json(await questionRepository.findOneBy({id: question.id}))
     } catch (error) {
-        console.error('Error creating question:', error)
-        res.status(500).json({ message: 'Failed to create question' })
+        console.error('Error creating question:', error.message)
+        res.status(500).send(error.message)
     }
 })
 

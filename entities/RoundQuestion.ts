@@ -12,8 +12,8 @@ export class RoundQuestion {
     @PrimaryColumn("int")
     question_id!: number
 
-    @PrimaryColumn("int")
-    team_id!: number
+    @Column("int", { nullable: true })
+    team_id?: number
 
     @Column("int", { nullable: true })
     answer_id!: number
