@@ -103,16 +103,20 @@ watch(() => props.round?.round_teams, () => {
 <template>
   <div class="flex flex-col items-center w-full h-full">
     <div class="fixed top-12 text-center flex flex-col justify-center items-center">
-      <div v-if="winningTeam" class="flex justify-center items-center w-fit gap-1 bg-primary-400 p-2 rounded-2xl text-center text-white font-bold">
-        <h1 class="text-4xl">Equipa Vencedora:</h1>
+      <div v-if="winningTeam" class="flex flex-col justify-center items-center w-fit gap-1 bg-primary-400 p-2 rounded-2xl text-center text-white font-bold">
+        <h1 class="text-xl">Equipa Vencedora:</h1>
 
         <div class="flex gap-4">
-          <div v-for="words in winningTeam.name.split(' ')" class="flex">
-            <div v-for="word in words" class="word text-6xl flex-wrap">
-            <span class="letter" v-for="(char, i) in Array.from(word)"
-                  :style="`--i: ${i}; --speed: 1.5`">
-              {{ char }}
-            </span>
+          <div v-for="(word, wordIndex) in winningTeam.name.split(' ')" :key="wordIndex" class="flex items-center">
+            <div class="word text-6xl flex">
+              <span
+                  class="letter"
+                  v-for="(char, charIndex) in Array.from(word)"
+                  :key="`${wordIndex}-${charIndex}`"
+                  :style="`--i: ${charIndex}; --speed: 1.5`"
+              >
+                {{ char }}
+              </span>
             </div>
           </div>
         </div>
