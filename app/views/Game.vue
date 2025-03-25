@@ -9,6 +9,7 @@ import Options from "@/views/game/Options.vue"
 import Question from "@/views/game/Question.vue"
 import {useProfileStore} from "@/stores/profile.js"
 import OperatorDropdown from "@/components/game/OperatorDropdown.vue"
+import Finish from "@/views/game/Finish.vue";
 
 const route = useRoute()
 const profile = useProfileStore()
@@ -49,7 +50,10 @@ onMounted(async () => {
     <Question v-else-if="round.status == 'SELECT_ANSWER' || round.status == 'SHOW_ANSWER'"
               :socket="socket" :round="round" />
 
-    <Team :socket="socket" :round="round" />
+    <Finish v-else-if="round.status == 'SHOW_WINNER'"
+              :socket="socket" :round="round" />
+
+    <Team v-if="round.status != 'SHOW_WINNER'" :socket="socket" :round="round" />
   </div>
 </template>
 

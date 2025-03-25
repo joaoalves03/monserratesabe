@@ -57,7 +57,7 @@ const addAdmin = async () => {
         <div class="hidden md:flex">{{profile.data.name}}</div>
       </template>
 
-      <DropdownItem path="/dashboard/" icon="dashboard">Dashboard</DropdownItem>
+      <DropdownItem path="/dashboard/questions" icon="dashboard">Dashboard</DropdownItem>
       <DropdownItem @click="toggleModal(true)" icon="person_add">New Game</DropdownItem>
       <DropdownItem @click="addAdmin()" icon="person_add">New Admin</DropdownItem>
       <DropdownItem path="/api/auth/logout" icon="logout" class="danger">Log out</DropdownItem>

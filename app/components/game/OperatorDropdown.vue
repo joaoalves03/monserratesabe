@@ -47,6 +47,12 @@ async function changePhase() {
   }, true)
 }
 
+async function finishGame() {
+  props.socket.emit("updateRound", {
+    status: "SHOW_WINNER"
+  })
+}
+
 async function moreBuzzer() {
   props.socket.emit("launchBuzzerQuestion")
 }
@@ -93,7 +99,7 @@ async function moreBuzzer() {
     <Dropdown icon="settings">
       <DropdownItem @click="changePhase" icon="edit">Alterar Fase</DropdownItem>
       <DropdownItem @click="editPointsModal = !editPointsModal" icon="tune">Editar Pontos</DropdownItem>
-      <DropdownItem @click="" icon="sports_score">Acabar Jogo</DropdownItem>
+      <DropdownItem @click="finishGame" icon="sports_score">Acabar Jogo</DropdownItem>
       <DropdownItem path="/" icon="logout">Sair</DropdownItem>
     </Dropdown>
   </div>
