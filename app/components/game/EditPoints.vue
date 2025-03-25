@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import {Socket} from "socket.io-client"
-import {onMounted, PropType, ref} from "vue"
+import {onBeforeUpdate, PropType, ref} from "vue"
 import {Round} from "@/models/round.js"
 import Button from "@/components/Button.vue"
 import Modal from "@/components/Modal.vue";
@@ -23,11 +23,12 @@ const props = defineProps({
 const emit = defineEmits(["close"])
 const teamPoints = ref({})
 
-onMounted(() => {
+onBeforeUpdate(() => {
   props.round.round_teams.forEach((team_data) => {
     teamPoints.value[team_data.team.id] = team_data.score
   })
 })
+
 function close() {
   emit("close")
 }
