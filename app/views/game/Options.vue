@@ -50,7 +50,7 @@ async function selectCategory(id: number) {
 <template>
   <div class="flex flex-col w-screen h-screen justify-center items-center">
     <div class="flex flex-col grow justify-center items-center">
-      <div class="flex gap-1 flex-wrap">
+      <div class="flex gap-1 flex-wrap justify-center">
         <Button
             v-for="category in categories"
             :disabled="usedCategories.includes(category.id) || !profile.data"
