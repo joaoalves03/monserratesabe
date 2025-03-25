@@ -1,4 +1,4 @@
-import {Column, Entity, JoinColumn, ManyToOne, PrimaryColumn} from "typeorm"
+import {Entity, JoinColumn, ManyToOne, PrimaryColumn} from "typeorm"
 import {Round} from "./Round.js"
 import {Team} from "./Team.js"
 import {Category} from "./Category.js"
@@ -14,7 +14,7 @@ export class RoundCategory {
     @PrimaryColumn("int")
     team_id!: number
 
-    @Column("int", {default: 1})
+    @PrimaryColumn("int", {default: 1})
     round_game!: number
 
     @ManyToOne(() => Round, round => round.round_categories, { onDelete: 'CASCADE' })

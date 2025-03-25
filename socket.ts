@@ -7,11 +7,14 @@ import {Question} from "./entities/Question.js"
 import {RoundQuestion} from "./entities/RoundQuestion.js"
 import {RoundTeam} from "./entities/RoundTeam.js"
 import {Answer} from "./entities/Answer.js"
+import {RoundCategory} from "./entities/RoundCategory.js"
 
 let io: Server
 
 const roundRepository = AppDataSource.getRepository(Round)
 const roundTeamRepository = AppDataSource.getRepository(RoundTeam)
+const roundCategoryRepository = AppDataSource.getRepository(RoundCategory)
+const roundQuestionRepository = AppDataSource.getRepository(RoundQuestion)
 const questionRepository = AppDataSource.getRepository(Question)
 const answerRepository = AppDataSource.getRepository(Answer)
 
@@ -80,15 +83,18 @@ export const initIO = (httpServer: HttpServer) => {
             })
         })
 
-        socket.on('updateRound', async(data: Partial<Round>) => {
+        socket.on('updateRound', async(data: Partial<Round>, incrementGame: boolean | undefined) => {
+            await roundRepository.update({id: socket.data.gameId}, data)
+
+            if(incrementGame) {
+                await roundRepository.update({id: socket.data.gameId}, {
+                    round_game: () => 'round_game + 1'
+                })
+            }
+
             const round = await roundRepository.findOne({where: {id: socket.data.gameId}})
 
-            await roundRepository.update({id: socket.data.gameId}, {
-                ...round,
-                ...data
-            })
-
-            io.to(`game-${socket.data.gameId}`).emit("updateState", data)
+            io.to(`game-${socket.data.gameId}`).emit("updateState", round)
         })
 
         socket.on('launchQuestion', async() => {
@@ -116,6 +122,13 @@ export const initIO = (httpServer: HttpServer) => {
                 selected_answer: null,
                 current_question_number: () => `current_question_number + 1`,
                 answer_shuffle_seed: Math.random()
+            })
+
+            await roundCategoryRepository.insert({
+                round_id: round.id,
+                category_id: round.selected_category,
+                team_id: round.selected_team,
+                round_game: round.round_game
             })
 
             const updatedRound = await roundRepository.findOne({
@@ -201,6 +214,13 @@ export const initIO = (httpServer: HttpServer) => {
 
                 await updateTeamPoints(true, teamScore, socket)
             }
+
+            await roundQuestionRepository.insert({
+                round_id: round.id,
+                question_id: round.selected_question,
+                team_id: round.selected_team,
+                answer_id: round.selected_answer
+            })
 
             io.to(`game-${socket.data.gameId}`).emit("revealAnswer")
             io.to(`game-${socket.data.gameId}`).emit("updateState", {

@@ -44,7 +44,7 @@ async function goToTeamView() {
 async function changePhase() {
   props.socket.emit("updateRound", {
     status: "SELECT_PHASE"
-  })
+  }, true)
 }
 
 async function moreBuzzer() {
