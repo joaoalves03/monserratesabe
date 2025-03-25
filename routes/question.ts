@@ -117,10 +117,8 @@ router.get('/round_answers/:id', async (req, res) => {
 router.post('/', requireAdmin, async (req, res) => {
     try {
         const validationResult = CreateQuestionSchema.parse(req.body)
-        
-        const { question, image_url, category_id } = validationResult
 
-        const category = await categoryRepository.findOneBy({ id: category_id })
+        const category = await categoryRepository.findOneBy({ id: validationResult.category_id })
 
         if (!category) {
             res.status(404).json({ message: 'Category not found' })
@@ -128,14 +126,25 @@ router.post('/', requireAdmin, async (req, res) => {
         }
 
         const newQuestion = questionRepository.create({
-            question,
-            image_url,
+            question: validationResult.question,
+            image_url: validationResult.image_url,
             category
         })
 
-        await questionRepository.save(newQuestion)
+        const question = await questionRepository.save(newQuestion)
 
-        res.status(201).json(newQuestion)
+        for(const answer of validationResult.answers) {
+            await answerRepository.insert({
+                id: question.id,
+                answer_text: answer.answer_text,
+                image_url: answer.image_url,
+                question: {
+                    id: question.id,
+                }
+            })
+        }
+
+        res.status(201).json(await questionRepository.findOneBy({id: question.id}))
     } catch (error) {
         console.error('Error creating question:', error)
         res.status(500).json({ message: 'Failed to create question' })

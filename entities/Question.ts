@@ -1,6 +1,6 @@
 import {Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn} from "typeorm"
 import {Category} from "./Category.js"
-import {Answer} from "./Answer.js"
+import {Answer, CreateQuestionAnswerSchema} from "./Answer.js"
 import {z} from "zod"
 
 @Entity()
@@ -24,7 +24,8 @@ export class Question {
 export const CreateQuestionSchema = z.object({
     question: z.string().min(1, "Question text is required"),
     image_url: z.string().nullable().optional(),
-    category_id: z.number({ required_error: "Category ID is required" })
+    category_id: z.number({ required_error: "Category ID is required" }),
+    answers: z.array(CreateQuestionAnswerSchema).min(1, "At least one answer is required")
 })
 
 export const UpdateQuestionSchema = z.object({
