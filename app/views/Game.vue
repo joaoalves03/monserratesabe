@@ -53,7 +53,7 @@ onMounted(async () => {
 
     <div v-if="!round">Loading...</div>
 
-    <Phase v-else-if="round.status == 'SELECT_PHASE'" :socket="socket" />
+    <Phase v-else-if="round.status == 'SELECT_PHASE' && profile.data" :socket="socket" />
     <Options v-else-if="round.status == 'SELECT_OPTIONS'"
              :socket="socket" :round="round" />
     <Question v-else-if="round.status == 'SELECT_ANSWER' || round.status == 'SHOW_ANSWER'"
@@ -62,7 +62,7 @@ onMounted(async () => {
     <Finish v-else-if="round.status == 'SHOW_WINNER'"
               :socket="socket" :round="round" />
 
-    <Team v-if="round.status != 'SHOW_WINNER'" :socket="socket" :round="round" />
+    <Team :socket="socket" :round="round" />
   </div>
 </template>
 

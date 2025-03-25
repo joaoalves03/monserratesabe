@@ -19,8 +19,12 @@ const props = defineProps({
   }
 })
 
-const hide = computed(() => ["SELECT_PHASE", "SHOW_WINNER"].includes(props.round.status))
-const fullscreen = computed(() => ["SELECT_TEAM", "SHOW_TEAMS"].includes(props.round.status))
+const hide = computed(() =>
+    ["SHOW_WINNER"].includes(props.round.status) || (["SELECT_PHASE"].includes(props.round.status) && profile.data)
+)
+const fullscreen = computed(() =>
+    ["SELECT_TEAM", "SHOW_TEAMS"].includes(props.round.status) || (["SELECT_PHASE"].includes(props.round.status) && !profile.data)
+)
 const operatorAndTeamChallenge = computed(() => profile.data && props.round.phase == "TEAM_CHALLENGE")
 const isSelected = (teamId: number) => props.round.selected_team === teamId
 const pointAdjustment = ref<Record<number, number>>({})
