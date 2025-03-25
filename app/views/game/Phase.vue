@@ -22,6 +22,7 @@ async function updatePhase(key: string) {
 
     do {
       number_of_questions = await prompt.ask("Número de perguntas")
+      if(!number_of_questions) return
       number_of_questions = parseInt(number_of_questions)
     } while (isNaN(number_of_questions))
 
