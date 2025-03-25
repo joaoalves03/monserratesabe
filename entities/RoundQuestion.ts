@@ -15,11 +15,8 @@ export class RoundQuestion {
     @PrimaryColumn("int")
     team_id!: number
 
-    @Column("int")
+    @Column("int", { nullable: true })
     answer_id!: number
-
-    @Column("int")
-    round_game!: number
 
     @ManyToOne(() => Round, round => round.round_questions, { onDelete: 'CASCADE' })
     @JoinColumn({ name: "round_id" })
