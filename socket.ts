@@ -113,7 +113,9 @@ export const initIO = (httpServer: HttpServer) => {
             await roundRepository.update({id: socket.data.gameId}, {
                 status: "SELECT_ANSWER",
                 selected_question: question.id,
-                current_question_number: () => `current_question_number + 1`
+                selected_answer: null,
+                current_question_number: () => `current_question_number + 1`,
+                answer_shuffle_seed: Math.random()
             })
 
             const updatedRound = await roundRepository.findOne({
@@ -123,6 +125,7 @@ export const initIO = (httpServer: HttpServer) => {
             io.to(`game-${socket.data.gameId}`).emit("updateState", {
                 status: "SELECT_ANSWER",
                 selected_question: question.id,
+                selected_answer: null,
                 current_question_number: updatedRound.current_question_number
             })
         })
@@ -150,7 +153,8 @@ export const initIO = (httpServer: HttpServer) => {
                 selected_team: null,
                 selected_answer: null,
                 selected_question: question.id,
-                current_question_number: () => `current_question_number + 1`
+                current_question_number: () => `current_question_number + 1`,
+                answer_shuffle_seed: Math.random()
             })
 
             const updatedRound = await roundRepository.findOne({
@@ -168,10 +172,6 @@ export const initIO = (httpServer: HttpServer) => {
         })
 
         socket.on('submitAnswer', async () => {
-            // TODO: MODIFY TEAM POINTS
-            // Normal +10 -5
-            // Buzzer +20 -10
-
             await roundRepository.update({id: socket.data.gameId}, {
                 status: "SHOW_ANSWER"
             })
@@ -186,6 +186,9 @@ export const initIO = (httpServer: HttpServer) => {
                 },
             }))
 
+            // Change points
+            // Normal +10 -5
+            // Buzzer +20 -10
             if(round.selected_team) {
                 const teamScore = {}
                 if(isCorrect) {
