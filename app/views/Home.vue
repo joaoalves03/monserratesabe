@@ -46,15 +46,15 @@ function goToGame(id: number) {
             class="bg-gray-300 rounded-lg w-60 hover:bg-gray-400 hover:cursor-pointer transition-all overflow-hidden"
         >
           <div class="p-4">
-            <b>{{round.name}}</b>
+            <b class="line-clamp-2">{{round.name}}</b>
           </div>
           <div class="flex">
             <div
-                class="flex justify-center items-center w-full text-white font-bold"
+                class="flex justify-center items-center overflow-hidden w-full text-white font-bold"
                 v-for="team in round.round_teams"
                 :style="{ backgroundColor: team.color }"
             >
-              {{team.team.team_name}}
+              <p class="truncate w-full text-center px-2">{{team.team.team_name}}</p>
             </div>
           </div>
         </div>
