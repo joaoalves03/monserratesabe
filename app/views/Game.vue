@@ -35,6 +35,10 @@ onMounted(async () => {
       round.value = {...round.value, ...state}
     }
   })
+
+  socket.on("outOfQuestions", () => {
+    alert("Out of Questions")
+  })
 })
 </script>
 

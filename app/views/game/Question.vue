@@ -64,10 +64,6 @@ props.socket.on("revealAnswer", async () => {
         <p>{{category.name}}</p>
         <p>•</p>
         <p v-if="profile.data">{{question.id}}</p>
-<!--        <template v-if="operador">-->
-<!--          <p>•</p>-->
-<!--          <p>{{pergunta.id}}</p>-->
-<!--        </template>-->
       </div>
 
       <p class="leading-none whitespace-pre-wrap break-words text-center" :style="{ fontSize: calculateFontSize(question.question) + 'rem' }">
@@ -75,8 +71,8 @@ props.socket.on("revealAnswer", async () => {
       </p>
     </div>
     <div class="relative flex items-center justify-center max-h-full w-full my-auto">
-<!--        <img v-if="informacaoJogo.pergunta.imagem != null" class="rounded bg-white p-2 w-auto object-contain max-h-[25vh]" :src="informacaoJogo.pergunta.imagem"/>-->
-      <img class="rounded p-2 w-auto object-contain max-h-[25vh]" src="@/assets/logo.png"/>
+      <img v-if="question.image_url != null" class="rounded bg-white p-2 w-auto object-contain max-h-[25vh]" :src="question.image_url" :alt="question.question"/>
+      <img v-else class="rounded p-2 w-auto object-contain max-h-[25vh]" src="@/assets/logo.png" :alt="question.question"/>
     </div>
   </div>
 

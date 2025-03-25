@@ -62,7 +62,7 @@ function isValidHttpUrl(str: string): boolean {
     <p class="flex h-full pb-2 w-1/6 items-center justify-center text-center text-[10vh]">{{letters[index]}}</p>
 
     <div class="flex h-full flex-1 items-center px-6">
-      <img v-if="isValidHttpUrl(answer.answer_text)" class="h-full max-h-[10vh] w-auto object-contain" :src="answer.answer_text" />
+      <img v-if="answer.image_url != null" class="h-full max-h-[10vh] w-auto object-contain" :src="answer.image_url" :alt="answer.answer_text"/>
       <template v-else>
         <p class="flex h-full text-left items-center text-2xl leading-tight" :style="{ fontSize: calculateFontSize(answer.answer_text) + 'rem' }">
           {{answer.answer_text}}

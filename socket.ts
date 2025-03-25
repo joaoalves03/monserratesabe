@@ -33,20 +33,16 @@ async function updateTeamPoints(increase: boolean, val: Object, socket: any) {
 
     io.to(`game-${socket.data.gameId}`)
         .emit("updateState",
-            await roundRepository.findOne({
-                where: {id: socket.data.gameId}, relations: [
-                    'round_questions',
-                    'round_teams',
-                    'round_teams.team',
-                    'round_teams.team.members',
-                    'round_categories'
-                ],
-                order: {
-                    round_teams: {
-                        order: "ASC"
-                    },
-                },
-            }))
+            await roundRepository
+                .createQueryBuilder("round")
+                .leftJoinAndSelect("round.round_questions", "round_questions")
+                .leftJoinAndSelect("round.round_teams", "round_teams")
+                .leftJoinAndSelect("round_teams.team", "team")
+                .leftJoinAndSelect("team.members", "members")
+                .leftJoinAndSelect("round.round_categories", "round_categories")
+                .where("round.id = :gameId", { gameId: socket.data.gameId })
+                .orderBy("round_teams.order", "ASC")
+                .getOne())
 }
 
 export const initIO = (httpServer: HttpServer) => {
@@ -65,21 +61,16 @@ export const initIO = (httpServer: HttpServer) => {
             socket.join(`game-${gameId}`)
             socket.data.gameId = gameId
 
-            const round = await roundRepository.findOne({
-                where: {id: gameId},
-                relations: [
-                    'round_questions',
-                    'round_teams',
-                    'round_teams.team',
-                    'round_teams.team.members',
-                    'round_categories'
-                ],
-                order: {
-                    round_teams: {
-                        order: "ASC"
-                    },
-                }
-            })
+            const round = await roundRepository
+                .createQueryBuilder("round")
+                .leftJoinAndSelect("round.round_questions", "round_questions")
+                .leftJoinAndSelect("round.round_teams", "round_teams")
+                .leftJoinAndSelect("round_teams.team", "team")
+                .leftJoinAndSelect("team.members", "members")
+                .leftJoinAndSelect("round.round_categories", "round_categories")
+                .where("round.id = :gameId", { gameId })
+                .orderBy("round_teams.order", "ASC")
+                .getOne()
 
             socket.emit("updateState", round)
         })
@@ -106,8 +97,7 @@ export const initIO = (httpServer: HttpServer) => {
             }
 
             const round = await roundRepository.findOne({
-                where: {id: socket.data.gameId},
-                order: { round_teams: { order: "ASC" } }
+                where: {id: socket.data.gameId}
             })
 
             io.to(`game-${socket.data.gameId}`).emit("updateState", round)
@@ -175,6 +165,11 @@ export const initIO = (httpServer: HttpServer) => {
                 .orderBy('RANDOM()')
                 .limit(1)
                 .getOne()
+
+            if(!question) {
+                socket.emit("outOfQuestions")
+                return
+            }
 
             await roundRepository.update({id: socket.data.gameId}, {
                 status: "SELECT_ANSWER",

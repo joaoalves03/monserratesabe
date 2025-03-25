@@ -7,8 +7,11 @@ export class Answer {
     @PrimaryGeneratedColumn()
     id!: number
 
-    @Column("text")
+    @Column("text", { default: "" })
     answer_text!: string
+
+    @Column("text", { nullable: true })
+    image_url?: string
 
     @Column("boolean", { default: false })
     is_correct!: boolean

@@ -14,15 +14,14 @@ const roundRepository = AppDataSource.getRepository(Round)
 
 router.get("/", async (req, res) => {
     try {
-        const rounds = await roundRepository.find({
-            relations: [
-                'round_questions',
-                'round_teams',
-                'round_teams.team',
-                'round_categories'
-            ],
-            order: { round_teams: { order: "ASC" } }
-        })
+        const rounds = await roundRepository
+            .createQueryBuilder("round")
+            .leftJoinAndSelect("round.round_questions", "round_questions")
+            .leftJoinAndSelect("round.round_teams", "round_teams")
+            .leftJoinAndSelect("round_teams.team", "team")
+            .leftJoinAndSelect("round.round_categories", "round_categories")
+            .orderBy("round_teams.order", "ASC")
+            .getMany()
 
         res.status(200).json(rounds)
     } catch (error) {
@@ -72,15 +71,12 @@ router.post("/", requireAdmin, async (req, res) => {
 
         await roundTeamRepository.save(roundTeams)
 
-        const completeRound = await roundRepository.findOne({
-            where: { id: savedRound.id },
-            relations: ['round_teams'],
-            order: {
-                round_teams: {
-                    order: "ASC"
-                },
-            }
-        })
+        const completeRound = await roundRepository
+            .createQueryBuilder("round")
+            .leftJoinAndSelect("round.round_teams", "round_teams")
+            .where("round.id = :roundId", { roundId: savedRound.id })
+            .orderBy("round_teams.order", "ASC")
+            .getOne()
 
         res.status(201).json(completeRound)
     } catch (error) {

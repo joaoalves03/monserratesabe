@@ -12,7 +12,7 @@ export class Question {
     question!: string
 
     @Column("text", { nullable: true })
-    image_url!: string
+    image_url?: string
 
     @ManyToOne(() => Category, category => category.questions, { onDelete: 'RESTRICT' })
     category!: Category
