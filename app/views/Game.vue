@@ -43,7 +43,12 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="relative flex flex-col w-screen h-screen">
+  <div
+      class="relative flex flex-col w-screen h-screen select-none"
+      :class="profile.data
+        ? ''
+        : 'pointer-events-none'"
+  >
     <OperatorDropdown v-if="profile.data" :socket="socket" :round="round" />
 
     <div v-if="!round">Loading...</div>
