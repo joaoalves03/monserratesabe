@@ -51,7 +51,9 @@ onMounted(async () => {
   >
     <OperatorDropdown v-if="profile.data && round" :socket="socket" :round="round" />
 
-    <div v-if="!round">Loading...</div>
+    <div v-if="!round" class="w-full h-full flex flex-col justify-center items-center">
+      <span class="material-symbols-rounded fill text-6xl animate-spin">autorenew</span>
+    </div>
 
     <Phase v-else-if="round.status == 'SELECT_PHASE' && profile.data" :socket="socket" />
     <Options v-else-if="round.status == 'SELECT_OPTIONS'"
