@@ -26,7 +26,7 @@ async function updateTeamPoints(increase: boolean, val: Object, socket: any) {
                 round_id: Number(socket.data.gameId)
             },
             {
-                score: Math.max(0, increase ? () => `score + ${val[index]}` : val[index])
+                score: increase ? () => `score + ${val[index]}` : val[index]
             }
         )
     }
@@ -205,13 +205,13 @@ export const initIO = (httpServer: HttpServer) => {
 
             const round = await roundRepository.findOne({where: {id: socket.data.gameId}})
 
-            const isCorrect = (await answerRepository.exists({
+            const isCorrect = round.selected_answer ? (await answerRepository.exists({
                 where: {
                     id: round.selected_answer,
                     question: { id: round.selected_question },
                     is_correct: true
                 },
-            }))
+            })) : false
 
             // Change points
             // Normal +10 -5

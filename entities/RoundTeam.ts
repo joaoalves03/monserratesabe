@@ -10,7 +10,13 @@ export class RoundTeam {
     @PrimaryColumn("int")
     team_id!: number
 
-    @Column("int", { default: 0 })
+    @Column("int", {
+        default: 0,
+        transformer: {
+            from: (value: number) => value,
+            to: (value: number) => Math.max(0, value)
+        }
+    })
     score!: number
 
     @Column("int", { default: 0 })
