@@ -37,6 +37,7 @@ const __dirname = path.dirname(__filename)
 
 app.use(express.json())
 app.use(express.static(path.join(__dirname, 'dist')))
+app.use('/img', express.static(path.join(__dirname, 'img')))
 app.use(session({ secret: process.env.SESSION_SECRET!, resave: false, saveUninitialized: true }))
 app.use(passport.initialize())
 app.use(passport.session())
