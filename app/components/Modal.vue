@@ -16,7 +16,6 @@ const emit = defineEmits()
 
 const closeModal = () => {
   emit('close')
-  console.log("LOL")
 }
 </script>
 

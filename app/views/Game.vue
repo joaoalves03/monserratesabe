@@ -27,8 +27,6 @@ onMounted(async () => {
   socket.emit("joinGame", route.params.id)
 
   socket.on("updateState", (state) => {
-    console.log(state)
-
     if(!round.value) {
       round.value = state
     } else {
