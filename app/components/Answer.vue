@@ -33,19 +33,6 @@ const selected = computed(() => props.answer.id === props.round.selected_answer)
 const answered = computed(() => props.round.status === "SHOW_ANSWER")
 const isCorrect = computed(() => props.correctAnswers.includes(props.answer.id))
 
-// https://stackoverflow.com/questions/5717093/check-if-a-javascript-string-is-a-url
-function isValidHttpUrl(str: string): boolean {
-  let url: URL
-
-  try {
-    url = new URL(str)
-  } catch (_) {
-    return false
-  }
-
-  return (url.protocol === "http:" || url.protocol === "https:")
-}
-
 </script>
 
 <template>

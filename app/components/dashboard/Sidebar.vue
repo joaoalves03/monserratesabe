@@ -21,6 +21,7 @@ const open = ref(false)
       <SidebarItem icon="question_mark" path="questions" :open>Perguntas</SidebarItem>
       <SidebarItem icon="category" path="categories" :open>Categorias</SidebarItem>
       <SidebarItem icon="group" path="teams" :open>Equipas</SidebarItem>
+      <SidebarItem icon="visibility" path="previewer" :open>Visualizador</SidebarItem>
     </div>
   </div>
 </template>

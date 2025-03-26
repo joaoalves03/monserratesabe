@@ -31,6 +31,11 @@ const routes = [
                 name: 'Teams',
                 component: () => import("@/views/dashboard/Teams.vue"),
             },
+            {
+                path: 'previewer',
+                name: 'Previewer',
+                component: () => import("@/views/dashboard/Previewer.vue"),
+            },
         ]
     },
 ]
