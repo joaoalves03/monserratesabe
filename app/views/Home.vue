@@ -30,7 +30,7 @@ function goToGame(id: number) {
 
   <div class="w-full h-full flex flex-col justify-center items-center">
     <template v-if="rounds === undefined">
-        <span class="material-symbols-rounded fill text-6xl animate-spin">autorenew</span>
+        <span class="material-symbols-rounded fill text-6xl animate-spin">progress_activity</span>
     </template>
 
     <template v-else-if="rounds.length == 0">

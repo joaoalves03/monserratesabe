@@ -108,16 +108,16 @@ function adjustPoints(teamId: number, isAddition: boolean) {
          @click="selectTeam(team_data.team.id)">
 
       <p
-          class="text-4xl font-semibold"
+          class="text-2xl font-semibold"
           :class="[
-              fullscreen ? 'text-center' : 'truncate'
+              fullscreen ? 'text-center text-4xl' : 'truncate'
           ]"
       >
         {{team_data.team.team_name}}
       </p>
 
       <div v-if="fullscreen" class="flex flex-wrap items-center justify-center">
-        <p class="bg-black/10 p-2 m-1 rounded-md shadow-md text-2xl" v-for="member in team_data.team.members" :key="member.member_name">
+        <p class="bg-black/10 p-2 m-1 rounded-md shadow-md text-base" v-for="member in team_data.team.members" :key="member.member_name">
           {{member.member_name}}
         </p>
       </div>
