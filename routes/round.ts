@@ -65,6 +65,7 @@ router.post("/", requireAdmin, async (req, res) => {
             roundTeam.round = savedRound
             roundTeam.team_id = team.team_id
             roundTeam.color = team.color
+            roundTeam.score = 0
             roundTeam.order = index
             return roundTeam
         })
