@@ -65,6 +65,7 @@ onMounted(async () => {
               :socket="socket" :round="round" />
 
     <Team v-if="round" :socket="socket" :round="round" />
+    <div class="w-full h-24"></div>
   </div>
 </template>
 

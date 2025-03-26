@@ -88,7 +88,7 @@ function adjustPoints(teamId: number, isAddition: boolean) {
 </script>
 
 <template>
-  <div class="mt-auto flex w-full select-none transition-height duration-1000 ease-in-out" :class="([
+  <div class="absolute bottom-0 left-0 flex w-full select-none transition-height duration-1000 ease-in-out" :class="([
     hide ? 'hidden' : '',
     fullscreen ? 'h-screen' : 'h-24'
 ])">
@@ -147,6 +147,7 @@ function adjustPoints(teamId: number, isAddition: boolean) {
               type="number"
               min="1"
               v-model="pointAdjustment[team_data.team.id]"
+              @click.stop
           >
           <Button
               icon="add"
