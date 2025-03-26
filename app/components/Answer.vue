@@ -30,7 +30,7 @@ const emit = defineEmits(["click"])
 const letters = ["A", "B", "C", "D"]
 
 const selected = computed(() => props.answer.id === props.round.selected_answer)
-const answered = computed(() => props.round.status === "SHOW_ANSWER")
+const answered = computed(() => props.round.status === "SHOW_ANSWER" && props.correctAnswers.length > 0)
 const isCorrect = computed(() => props.correctAnswers.includes(props.answer.id))
 
 function calculateResponsiveFontSize(text: string): string {
