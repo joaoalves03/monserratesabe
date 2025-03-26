@@ -74,7 +74,7 @@ async function moreBuzzer() {
 
     <Button @click="launchQuestion"
             :disabled="round.selected_category == null"
-            :class="round.selected_category == null ? 'disabled' : 'danger'"
+            :class="round.selected_category == null && round.selected_team ? 'disabled' : 'danger'"
             v-if="round.status == 'SELECT_OPTIONS'">
       Confirmar
     </Button>
