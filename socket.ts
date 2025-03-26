@@ -26,7 +26,7 @@ async function updateTeamPoints(increase: boolean, val: Object, socket: any) {
                 round_id: Number(socket.data.gameId)
             },
             {
-                score: increase ? () => `score + ${val[index]}` : val[index]
+                score: Math.max(0, increase ? () => `score + ${val[index]}` : val[index])
             }
         )
     }
