@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import {Socket} from "socket.io-client"
-import {onMounted, PropType, Ref, ref} from "vue"
+import {onMounted, PropType, Ref, ref, useTemplateRef} from "vue"
 import {Round} from "@/models/round.js"
 import {Question} from "@/models/question.js"
 import axios from "axios"
@@ -8,6 +8,9 @@ import {Category} from "@/models/category.js"
 import Answer from "@/components/Answer.vue"
 import {calculateFontSize} from "@/util.js"
 import {useProfileStore} from "@/stores/profile.js"
+
+import wrongAnswerAudio from "@/assets/wrong.mp3"
+import correctAnswerAudio from "@/assets/correct.mp3"
 
 const profile = useProfileStore()
 
@@ -25,6 +28,9 @@ const props = defineProps({
 const question: Ref<Question | undefined> = ref(undefined)
 const category: Ref<Category | undefined> = ref(undefined)
 const correct_answers: Ref<Number[]> = ref([])
+
+const wrongAudio = useTemplateRef("wrongAudio")
+const correctAudio = useTemplateRef("correctAudio")
 
 onMounted(async () => {
   question.value = (await axios.get(`/api/question/by-round/${props.round.selected_question}/${props.round.id}`)).data
@@ -51,6 +57,12 @@ async function selectAnswer(id: number) {
 
 props.socket.on("revealAnswer", async () => {
   correct_answers.value = (await axios.get(`/api/question/round_answers/${props.round.id}`)).data
+
+  if(correct_answers.value.includes(props.round.selected_answer)) {
+    correctAudio.value.play()
+  } else {
+    wrongAudio.value.play()
+  }
 })
 </script>
 
@@ -81,6 +93,9 @@ props.socket.on("revealAnswer", async () => {
             @click="selectAnswer(answer.id)"
             :key="index" :answer="answer" :round="round" :index="index" :correctAnswers="correct_answers"/>
   </div>
+
+  <audio ref="wrongAudio" class="hidden" :src="wrongAnswerAudio"></audio>
+  <audio ref="correctAudio" class="hidden" :src="correctAnswerAudio"></audio>
 </div>
 </template>
 
