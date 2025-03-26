@@ -1,4 +1,14 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import axios from "axios"
+
+async function verifyAuth() {
+    try {
+        await axios.get("/api/profile")
+        return true
+    } catch (e) {
+        return { name: "Home", query: { reason: "unauthorized" } }
+    }
+}
 
 const routes = [
     {
@@ -15,6 +25,7 @@ const routes = [
         path: '/dashboard',
         name: 'Dashboard',
         component: () => import('@/views/Dashboard.vue'),
+        beforeEnter: async () => await verifyAuth(),
         children: [
             {
                 path: 'questions',

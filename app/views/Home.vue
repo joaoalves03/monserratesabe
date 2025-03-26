@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import Header from "@/components/Header.vue"
-import {onMounted, onUnmounted, Ref, ref} from "vue"
+import {onMounted, Ref, ref} from "vue"
 import axios from "axios"
 import {Round} from "@/models/round.js"
-import {useRouter} from "vue-router"
+import {useRoute, useRouter} from "vue-router"
 
 const router = useRouter()
+const route = useRoute()
 
 const rounds: Ref<Round[] | undefined> = ref(undefined)
 
@@ -13,10 +14,10 @@ onMounted(async () => {
   const res = await axios.get("/api/round")
 
   rounds.value = res.data
-})
 
-onUnmounted(() => {
-
+  if(route.query.reason == "unauthorized") {
+    alert("Não autorizado")
+  }
 })
 
 function goToGame(id: number) {
