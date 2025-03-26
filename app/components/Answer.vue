@@ -33,6 +33,13 @@ const selected = computed(() => props.answer.id === props.round.selected_answer)
 const answered = computed(() => props.round.status === "SHOW_ANSWER")
 const isCorrect = computed(() => props.correctAnswers.includes(props.answer.id))
 
+function calculateResponsiveFontSize(text: string): string {
+  const textLength = String(text).length
+
+  const lengthFactor = Math.max(0.5, 2.5 - (textLength / 32))
+
+  return `clamp(0.8rem, ${lengthFactor * 3.5}vw, 2.5rem)`
+}
 </script>
 
 <template>
@@ -49,7 +56,7 @@ const isCorrect = computed(() => props.correctAnswers.includes(props.answer.id))
       <p class="text-center text-[6vw] leading-none">{{letters[index]}}</p>
 
       <template v-if="profile.data">
-        <div class="flex h-full w-1/6 items-center justify-center text-center">
+        <div class="flex items-center justify-center text-center">
           <span v-if="isCorrect" class="material-symbols-rounded fill text-[4vw]">check</span>
           <span v-else class="material-symbols-rounded fill text-[4vw]">close</span>
         </div>
@@ -59,7 +66,10 @@ const isCorrect = computed(() => props.correctAnswers.includes(props.answer.id))
     <div class="flex h-full flex-1 items-center px-6 w-full">
       <img v-if="answer.image_url != null" class="h-full max-h-[10vh] w-auto object-contain" :src="answer.image_url" :alt="answer.answer_text"/>
       <template v-else>
-        <p class="answer-text">
+        <p
+            class="answer-text"
+            :style="{ fontSize: calculateResponsiveFontSize(answer.answer_text) }"
+        >
           {{answer.answer_text}}
         </p>
       </template>
@@ -70,8 +80,7 @@ const isCorrect = computed(() => props.correctAnswers.includes(props.answer.id))
 <style scoped>
 .answer-text {
   @apply w-full break-words hyphens-auto;
-
-  font-size: clamp(0.8rem, 3vw, 2rem);
   line-height: 1.2;
+  font-weight: bold;
 }
 </style>
