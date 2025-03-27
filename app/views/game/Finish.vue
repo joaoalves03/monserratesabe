@@ -37,21 +37,36 @@ const sortedTeams = computed(() => {
         color: team_data.color
       }))
       .sort((a, b) => b.points - a.points)
+
+  const maxScore = teamsArray[0]?.points || 0
+  const winningTeams = teamsArray.filter(team => team.points === maxScore)
+
+  const arrangedTeams = winningTeams.map((team, _) => ({
+    ...team,
+    isWinner: true,
+    position: 1
+  }))
+
+  const remainingTeams = teamsArray
+      .filter(team => !winningTeams.includes(team))
       .map((team, index) => ({
         ...team,
-        position: index + 1
+        isWinner: false,
+        position: winningTeams.length + index + 1
       }))
 
+  const allTeams = [...arrangedTeams, ...remainingTeams]
+
   const arranged: any[] = []
-  teamsArray.forEach((team, index) => {
+  allTeams.forEach((team, index) => {
     index % 2 === 0 ? arranged.push(team) : arranged.unshift(team)
   })
 
   return arranged
 })
 
-const winningTeam = computed(() => {
-  return sortedTeams.value.find(team => team.position === 1) || null
+const winningTeams = computed(() => {
+  return sortedTeams.value.filter(team => team.isWinner) || []
 })
 
 function calculateHeight(score: number) {
@@ -118,35 +133,56 @@ watch(() => props.round?.round_teams, () => {
 <template>
   <div class="flex flex-col items-center w-full h-full">
     <div class="fixed top-12 text-center flex flex-col justify-center items-center">
-      <div v-if="winningTeam" class="flex flex-col justify-center items-center w-fit gap-1 bg-primary-400 p-2 rounded-2xl text-center text-white font-bold">
-        <h1 class="text-xl">Equipa Vencedora:</h1>
-        <div class="flex gap-4">
-          <div v-for="(word, wordIndex) in winningTeam.name.split(' ')" :key="wordIndex" class="flex items-center">
-            <div class="word text-6xl flex">
-              <span
-                  class="letter"
-                  v-for="(char, charIndex) in Array.from(word)"
-                  :key="`${wordIndex}-${charIndex}`"
-                  :style="`--i: ${charIndex}; --speed: 1.5`"
-              >
-                {{ char }}
-              </span>
+      <div v-if="winningTeams.length" class="flex flex-col justify-center items-center w-fit gap-1 bg-primary-400 p-2 rounded-2xl text-center text-white font-bold">
+        <h1
+            :class="winningTeams.length > 1 ? 'text-4xl' : 'text-xl'"
+        >
+          {{ winningTeams.length > 1 ? 'Empate:' : 'Equipa Vencedora:' }}
+        </h1>
+        <div class="flex flex-col gap-2">
+          <div
+              v-for="(team, teamIndex) in winningTeams"
+              :key="teamIndex"
+              class="flex flex-col items-center"
+          >
+            <div class="flex gap-4">
+              <div v-for="(word, wordIndex) in team.name.split(' ')" :key="wordIndex" class="flex items-center">
+                <div
+                    class="word flex"
+                    :class="winningTeams.length > 1 ? 'text-4xl' : 'text-6xl'"
+                >
+                  <span
+                      class="letter"
+                      v-for="(char, charIndex) in Array.from(word)"
+                      :key="`${wordIndex}-${charIndex}`"
+                      :style="`--i: ${charIndex}; --speed: 1.5`"
+                  >
+                    {{ char }}
+                  </span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      <div v-if="winningTeam" class="flex justify-center gap-2 text-4xl px-4">
-        <p
-            v-for="member in winningTeam.members"
-            :key="member.member_name"
-            class="p-2 mt-4 rounded-md shadow-md text-white font-bold"
-            :style="{
-              backgroundColor: winningTeam.color
-            }"
+      <div v-if="winningTeams.length < 2" class="flex justify-center gap-2 text-4xl px-4 mt-4">
+        <div
+            v-for="team in winningTeams"
+            :key="team.name"
+            class="flex"
         >
-          {{ member.member_name }}
-        </p>
+          <p
+              v-for="member in team.members"
+              :key="member.member_name"
+              class="p-2 m-1 rounded-md shadow-md text-white font-bold"
+              :style="{
+                backgroundColor: team.color
+              }"
+          >
+            {{ member.member_name }}
+          </p>
+        </div>
       </div>
     </div>
 
@@ -163,7 +199,7 @@ watch(() => props.round?.round_teams, () => {
               class="flex justify-center items-center h-fit aspect-square p-2 mb-2 rounded-2xl"
               :class="[
                 team.position <= 3 ? medalColors[team.position] : 'bg-primary-500/80',
-                team.position === 1 ? 'text-6xl p-1 font-bold' : 'text-4xl',
+                team.position === 1 ? 'text-6xl p-1 font-bold w-[4rem] h-[4rem]' : 'text-4xl w-[3rem] h-[3rem]',
                 'text-white shadow-md'
               ]"
           >
