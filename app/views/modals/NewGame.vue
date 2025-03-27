@@ -8,7 +8,9 @@ import Button from "@/components/Button.vue"
 import Dropdown from "@/components/Dropdown.vue"
 import DropdownItem from "@/components/DropdownItem.vue"
 import {toast} from "@/plugins/toast.js";
+import {useProfileStore} from "@/stores/profile.js"
 
+const profile = useProfileStore()
 const router = useRouter()
 const props = defineProps({
   visible: {
@@ -39,6 +41,8 @@ const selectedTeams = ref<SelectedTeam[]>([
 ])
 
 onMounted(async () => {
+  if(!profile.data) return
+
   try {
     const response = await axios.get("/api/team")
     availableTeams.value = response.data

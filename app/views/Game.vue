@@ -37,6 +37,10 @@ onMounted(async () => {
   socket.on("outOfQuestions", () => {
     alert("Out of Questions")
   })
+
+  socket.on("error", (err) => {
+    console.error(err)
+  })
 })
 </script>
 
