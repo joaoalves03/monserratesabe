@@ -19,14 +19,24 @@ const questionRepository = AppDataSource.getRepository(Question)
 const answerRepository = AppDataSource.getRepository(Answer)
 
 async function updateTeamPoints(increase: boolean, val: Object, socket: any) {
+    const teams = await roundTeamRepository.find({
+        where: {
+            round_id: socket.data.gameId
+        }
+    })
+
+    console.log(teams)
+
     for(let index of Object.keys(val)) {
+        const team = teams.find((x) => x.team_id == Number(index))
+
         await roundTeamRepository.update(
             {
                 team_id: Number(index),
                 round_id: Number(socket.data.gameId)
             },
             {
-                score: increase ? () => `score + ${val[index]}` : val[index]
+                score: Math.max(0, increase ? team.score + val[index] : val[index])
             }
         )
     }
