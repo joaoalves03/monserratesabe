@@ -18,7 +18,7 @@ const props = defineProps({
 })
 
 const colors = [
-  '#ee3333', '#269cfd', '#26bb3c',
+  '#ee3333', '#269cfd', '#22bb3c',
   '#ff3dee', '#D4A5A5', '#9B89B3'
 ]
 
@@ -117,10 +117,10 @@ const savePoll = async () => {
 
     closeModal()
     await router.push(`/game/${response.data.id}`)
-    toast.success("Game created")
+    toast.success("Jogo criado")
   } catch (error) {
     console.error("Error creating game", error)
-    toast.success("Error creating game")
+    toast.error("Erro a criar jogo")
   }
 }
 </script>
