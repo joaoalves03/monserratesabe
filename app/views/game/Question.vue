@@ -74,7 +74,7 @@ props.socket.on("revealAnswer", async () => {
         <p>{{round.current_question_number}}/{{round.max_questions}}</p>
         <p>•</p>
         <p>{{category.name}}</p>
-        <p>•</p>
+        <p v-if="profile.data">•</p>
         <p v-if="profile.data">{{question.id}}</p>
       </div>
 
