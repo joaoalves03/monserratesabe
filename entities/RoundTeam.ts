@@ -30,6 +30,6 @@ export class RoundTeam {
     @JoinColumn({ name: "team_id" })
     team!: Team
 
-    @Column("varchar", { default: "#ff0000" })
+    @Column("varchar", { default: "#000000" })
     color!: string
 }
