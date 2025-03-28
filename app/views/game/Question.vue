@@ -5,7 +5,7 @@ import {Round} from "@/models/round.js"
 import {Question} from "@/models/question.js"
 import axios from "axios"
 import {Category} from "@/models/category.js"
-import Answer from "@/components/Answer.vue"
+import Answer from "@/components/game/Answer.vue"
 import {calculateFontSize} from "@/util.js"
 import {useProfileStore} from "@/stores/profile.js"
 

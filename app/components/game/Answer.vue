@@ -3,6 +3,7 @@ import {useProfileStore} from "@/stores/profile.js"
 import {Answer} from "@/models/answer.js"
 import {computed, PropType} from "vue"
 import {Round} from "@/models/round.js"
+import {calculateFontSize} from "@/util.js";
 
 const profile = useProfileStore()
 
@@ -32,14 +33,6 @@ const letters = ["A", "B", "C", "D"]
 const selected = computed(() => props.answer.id === props.round.selected_answer)
 const answered = computed(() => props.round.status === "SHOW_ANSWER" && props.correctAnswers.length > 0)
 const isCorrect = computed(() => props.correctAnswers.includes(props.answer.id))
-
-function calculateResponsiveFontSize(text: string): string {
-  const textLength = String(text).length
-
-  const lengthFactor = Math.max(0.5, 2.5 - (textLength / 32))
-
-  return `clamp(0.8rem, ${lengthFactor * 3.5}vw, 2.5rem)`
-}
 </script>
 
 <template>
@@ -66,10 +59,7 @@ function calculateResponsiveFontSize(text: string): string {
     <div class="flex h-full flex-1 items-center px-6 w-full">
       <img v-if="answer.image_url != null" class="h-full max-h-[10vh] w-auto object-contain" :src="answer.image_url" :alt="answer.answer_text"/>
       <template v-else>
-        <p
-            class="answer-text"
-            :style="{ fontSize: calculateResponsiveFontSize(answer.answer_text) }"
-        >
+        <p class="answer-text" :style="{ fontSize: calculateFontSize(answer.answer_text) + 'rem' }">
           {{answer.answer_text}}
         </p>
       </template>
@@ -79,8 +69,6 @@ function calculateResponsiveFontSize(text: string): string {
 
 <style scoped>
 .answer-text {
-  @apply w-full break-words hyphens-auto;
-  line-height: 1.2;
-  font-weight: bold;
+  @apply flex h-full text-left items-center font-bold leading-tight w-full;
 }
 </style>

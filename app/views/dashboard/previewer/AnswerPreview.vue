@@ -27,7 +27,7 @@ const letters = ["A", "B", "C", "D"]
     <div class="flex h-full flex-1 items-center px-6">
       <img v-if="answer.image_url != null" class="h-full max-h-[10vh] w-auto object-contain" :src="answer.image_url" :alt="answer.answer_text"/>
       <template v-else>
-        <p class="flex h-full text-left items-center text-2xl leading-tight" :style="{ fontSize: calculateFontSize(answer.answer_text) + 'rem' }">
+        <p class="answer-text" :style="{ fontSize: calculateFontSize(answer.answer_text) + 'rem' }">
           {{answer.answer_text}}
         </p>
       </template>
@@ -36,5 +36,7 @@ const letters = ["A", "B", "C", "D"]
 </template>
 
 <style scoped>
-
+.answer-text {
+  @apply flex h-full text-left items-center font-bold leading-tight w-full;
+}
 </style>
